@@ -80,22 +80,50 @@ void test_sobel()
     cv::Mat1f edge_y = filters::sobelY(src_gray);
     cv::Mat1f edge = filters::sobel(src_gray);
 
-    // -- Float 2 uint8 for display.
+    // -- Convert image from float to uint8 for display.
     constexpr bool TAKE_ABS = true;
     constexpr float SCALE_GRAD = 0.3, INC_GRAD = 0;
     cv::Mat1b disp_edge_x = basics::float2uint8(edge_x, TAKE_ABS, SCALE_GRAD, INC_GRAD);
     cv::Mat1b disp_edge_y = basics::float2uint8(edge_y, TAKE_ABS, SCALE_GRAD, INC_GRAD);
     cv::Mat1b disp_edge = basics::float2uint8(edge, TAKE_ABS, SCALE_GRAD, INC_GRAD);
 
-    // -- Show image
-    const std::string WINDOW_NAME = "Original/SobelX/SobelY/Sobel";
+    // -- Show image.
+    const std::string WINDOW_NAME = "Original / SobelX / SobelY / Sobel";
     basics::display_images(
         {src_gray, disp_edge_x, disp_edge_y, disp_edge},
+        WINDOW_NAME);
+}
+void test_canny()
+{
+
+    // -- Read image
+    // const string filename = "data/color_chessboard.jpg";
+    const string filename = "data/simple_shapes2.png";
+    cv::Mat src_gray;
+    cv::cvtColor(readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
+
+    // -- Canny.
+    const float lb = 100.0, ub = 30.0;
+    cv::Mat1b edge_canny = filters::canny(src_gray, lb, ub);
+
+    // -- For comparison, compute sobel.
+    constexpr bool TAKE_ABS = true;
+    cv::Mat1b edge_sobel = basics::float2uint8(filters::sobel(src_gray), TAKE_ABS);
+
+    // -- For comparison, compute Canny by opencv.
+    cv::Mat1b edge_canny_opencv;
+    cv::Canny(src_gray, edge_canny_opencv, 70, 210, 3);
+
+    // -- Show image.
+    const std::string WINDOW_NAME = "Original / Sobel / Canny(Mine) / Canny(OpenCV)";
+    basics::display_images(
+        {src_gray, edge_sobel, edge_canny, edge_canny_opencv},
         WINDOW_NAME);
 }
 
 int main(int argc, char const *argv[])
 {
     // test_conv2d();
-    test_sobel();
+    // test_sobel();
+    test_canny();
 }
