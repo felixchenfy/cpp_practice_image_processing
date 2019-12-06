@@ -102,17 +102,18 @@ void test_canny()
     cv::Mat src_gray;
     cv::cvtColor(readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 
-    // -- Canny.
-    const float lb = 100.0, ub = 30.0;
-    cv::Mat1b edge_canny = filters::canny(src_gray, lb, ub);
+    // -- Canny(Mine).
+    const float lb = 70.0, ub = 210.0;
+    const int kernel_size = 3;
+    cv::Mat1b edge_canny = filters::canny(src_gray, lb, ub, kernel_size);
 
     // -- For comparison, compute sobel.
     constexpr bool TAKE_ABS = true;
     cv::Mat1b edge_sobel = basics::float2uint8(filters::sobel(src_gray), TAKE_ABS);
 
-    // -- For comparison, compute Canny by opencv.
+    // -- Canny(OpenCV).
     cv::Mat1b edge_canny_opencv;
-    cv::Canny(src_gray, edge_canny_opencv, 70, 210, 3);
+    cv::Canny(src_gray, edge_canny_opencv, lb, ub, kernel_size);
 
     // -- Show image.
     const std::string WINDOW_NAME = "Original / Sobel / Canny(Mine) / Canny(OpenCV)";
