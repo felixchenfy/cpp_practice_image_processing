@@ -19,17 +19,20 @@ inline cv::Mat3b gray2color(const cv::Mat1b &gray)
     return color;
 }
 
-inline cv::Mat1b float2uint8(const cv::Mat1f &gray, float scale = -1.0)
+/**
+ * (( abs(gray) * scale) + inc_value).to_uint8()
+ */
+inline cv::Mat1b float2uint8(
+    const cv::Mat1f &gray,
+    bool take_abs = false,
+    float scale = 1.0,
+    float inc_value = 0.)
 {
     assert(gray.channels() == 1);
     cv::Mat1b dst;
-    // if (scale < 0)
-    // {
-        cv::Mat1f tmp = gray * scale; // Scale.
-        tmp.convertTo(dst, CV_8UC1);  // To uint8.
-    // }
-    // else
-        // gray.convertTo(dst, CV_8UC1); // To uint8.
+    cv::Mat1f tmp = take_abs ? gray : cv::abs(gray);
+    tmp = tmp * scale + inc_value; // Change value.
+    tmp.convertTo(dst, CV_8UC1);   // To uint8.
     return dst;
 }
 

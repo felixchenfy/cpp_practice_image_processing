@@ -76,23 +76,24 @@ void test_sobel()
     cv::cvtColor(readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Filter
-    // constexpr float SCALE_GRAD = 1.0;
-    // cv::Mat1f edge = filters::sobel(src_gray) * SCALE_GRAD;
-    // cv::Mat1f edge_x = filters::sobelX(src_gray) * SCALE_GRAD;
-    // cv::Mat1f edge_y = filters::sobelY(src_gray) * SCALE_GRAD;
-    cv::Mat1f edge = filters::sobel(src_gray) ;
-    cv::Mat1f edge_x = filters::sobelX(src_gray) ;
-    cv::Mat1f edge_y = filters::sobelY(src_gray) ;
+    cv::Mat1f edge_x = filters::sobelX(src_gray);
+    cv::Mat1f edge_y = filters::sobelY(src_gray);
+    cv::Mat1f edge = filters::sobel(src_gray);
+
+    // -- Float 2 uint8 for display.
+    constexpr bool TAKE_ABS = true;
+    constexpr float SCALE_GRAD = 0.3, INC_GRAD = 0;
+    cv::Mat1b disp_edge_x = basics::float2uint8(edge_x, TAKE_ABS, SCALE_GRAD, INC_GRAD);
+    cv::Mat1b disp_edge_y = basics::float2uint8(edge_y, TAKE_ABS, SCALE_GRAD, INC_GRAD);
+    cv::Mat1b disp_edge = basics::float2uint8(edge, TAKE_ABS, SCALE_GRAD, INC_GRAD);
 
     // -- Show image
     const std::string WINDOW_NAME = "Original/SobelX/SobelY/Sobel";
     basics::display_images(
-        {src_gray,
-         basics::float2uint8(edge_x),
-         basics::float2uint8(edge_y),
-         basics::float2uint8(edge)},
+        {src_gray, disp_edge_x, disp_edge_y, disp_edge},
         WINDOW_NAME);
 }
+
 int main(int argc, char const *argv[])
 {
     // test_conv2d();
