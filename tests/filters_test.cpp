@@ -63,7 +63,7 @@ void test_conv2d()
 
     // -- Show image
     const std::string WINDOW_NAME = "Color/Gray/Blurred";
-    basics::display_images({src, src_gray, blurred}, WINDOW_NAME);
+    basics::display_images({src, src_gray, basics::float2uint8(blurred)}, WINDOW_NAME);
 }
 
 void test_sobel()

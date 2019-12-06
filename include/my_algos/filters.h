@@ -26,10 +26,10 @@ const Kernel GAUSSION_5x5 =
 
 } // namespace kernels
 
-cv::Mat1b conv2D(const cv::Mat1b &src, const Kernel &kernel);
-cv::Mat1b sobelX(const cv::Mat1b &src);
-cv::Mat1b sobelY(const cv::Mat1b &src);
-cv::Mat1f sobel(const cv::Mat1b &src, cv::Mat1f *dst_img_grad_direction = nullptr);
+cv::Mat1f conv2D(const cv::Mat &src, const Kernel &kernel);
+cv::Mat1f sobelX(const cv::Mat1b &src);
+cv::Mat1f sobelY(const cv::Mat1b &src);
+cv::Mat1f sobel(const cv::Mat1b &src);
 
 // cv::Mat1b sobel(const cv::Mat1b &src, int low_thresh, int high_thresh);
 // cv::Mat1b calcImageGradientMagnitudeAndDirection(cv::Mat1b src);

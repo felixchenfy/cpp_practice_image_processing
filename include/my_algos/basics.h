@@ -30,7 +30,7 @@ inline cv::Mat1b float2uint8(
 {
     assert(gray.channels() == 1);
     cv::Mat1b dst;
-    cv::Mat1f tmp = take_abs ? gray : cv::abs(gray);
+    cv::Mat1f tmp = take_abs ? cv::abs(gray) : gray;
     tmp = tmp * scale + inc_value; // Change value.
     tmp.convertTo(dst, CV_8UC1);   // To uint8.
     return dst;
