@@ -97,8 +97,8 @@ void test_canny()
 {
 
     // -- Read image
-    // const string filename = "data/color_chessboard.jpg";
-    const string filename = "data/simple_shapes2.png";
+    const string filename = "data/color_chessboard.jpg";
+    // const string filename = "data/simple_shapes2.png";
     cv::Mat src_gray;
     cv::cvtColor(readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 

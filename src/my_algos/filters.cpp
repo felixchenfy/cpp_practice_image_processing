@@ -118,7 +118,9 @@ cv::Mat1b canny(const cv::Mat1b &src, const float lb, const float ub, const int 
 {
     // -- Check input.
     assert(kernel_size == 3); // Only support 3.
-    constexpr float SCALE_GRADIENT_MAG = 1.3;
+
+    // Scale the gradient's magnitude to match with OpenCV. This is set by my experiment.
+    constexpr float SCALE_GRADIENT_MAG = 1.75;
 
     // -- Step 1:  Compute image gradient Ix, Iy.
     // Blur image.
@@ -140,27 +142,30 @@ cv::Mat1b canny(const cv::Mat1b &src, const float lb, const float ub, const int 
         {
             float dx = Ix.at<float>(i, j);
             float dy = Iy.at<float>(i, j);
-            // Ig.at<float>(i, j) = sqrt(pow(dx, 2.) + pow(dy, 2.));
+            // Ig.at<float>(i, j) = sqrt(pow(dx, 2.) + pow(dy, 2.)) * SCALE_GRADIENT_MAG;
             Ig.at<float>(i, j) = (fabs(dx) + fabs(dy)) * SCALE_GRADIENT_MAG;
             Id.at<float>(i, j) = atan2(dy, dx);
         }
+    // cv::imwrite("canny_gradient_mag.png", basics::float2uint8(Ig / 4.0));
+    // cv::imwrite("canny_gradient_dir.png", basics::float2uint8(Id / M_PI * 127.0 + 127.0));
 
     // -- Step 3: Non maximum suppression along the gradient direction.
     cv::Mat1f Ig_tmp = Ig.clone();
     const std::vector<cv::Point2i> neighbors = {
-        {+1, 00},
-        {+1, +1},
-        {00, +1},
-        {-1, +1},
-        {-1, 00},
+        {-1, 00}, // -180 degrees.
         {-1, -1},
         {00, -1},
         {+1, -1},
+        {+1, 00},
+        {+1, +1},
+        {00, +1},
+        {-1, +1}, // +180 degrees.
     };
     for (int i = r; i < src.rows - r; ++i)
         for (int j = r; j < src.cols - r; ++j)
         {
-            int index = abs(lround(Id.at<float>(i, j) / M_PI_4));
+            int index = lround(Id.at<float>(i, j) / M_PI_4) + 4; // 0~7
+            index = index == 8 ? 0 : index;                      // 8 means 180 degrees, which is the same as -180 degrees.
             int d_row = neighbors.at(index).y, d_col = neighbors.at(index).x;
             int r1 = i + d_row, r2 = i - d_row;
             int c1 = j + d_col, c2 = j - d_col;
