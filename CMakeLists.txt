@@ -26,6 +26,7 @@ add_subdirectory( src/my_algos )
 set( ALL_LIBS 
     ${OpenCV_LIBS}
     filters
+    geometry
 )
 
 # -- Tests
