@@ -3,6 +3,7 @@
 
 #include "my_algos/cv_basics.h"
 #include <vector>
+#include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
@@ -15,8 +16,23 @@ namespace geometry
 struct Line2d
 {
     double distance; // Distance to the origin.
-    double angle;    // Angle of the line in degree.
+    double angle;    // Angle of the line's perpendicular line which passes the origin.
     Line2d(double distance = 0.0, double angle = 0.0) : distance(distance), angle(angle) {}
+    void drawToImage(cv::Mat *img, const cv::Scalar color = {0, 0, 255}, const int thickness = 2) const
+    {
+        assert(img->channels() == 3);
+        double a = angle / 180.0 * M_PI; // Angle.
+        double x = distance * cos(a);
+        double y = distance * sin(a);
+        int L = 10 * (img->rows + img->cols); // Draw a line longer than image size.
+        double dx = cos(a - M_PI_2) * L, dy = sin(a - M_PI_2) * L;
+        cv::line(*img, {int(x + dx), int(y + dy)}, {int(x - dx), int(y - dy)}, color);
+    }
+    void print() const
+    {
+        std::cout << "Line angle = " << angle << " degrees, "
+                  << "distance = " << distance << " pixels." << std::endl;
+    }
 };
 
 /**
@@ -29,7 +45,8 @@ struct Line2d
  * @param nms_radius Radius of doing non-maximum suppression.
  * @return Parameters of each detected line.
  */
-std::vector<Line2d> houghLine(
+std::vector<Line2d>
+detectLineByHoughTransform(
     const cv::Mat1b &edge,
     cv::Mat1i *dst_polar = nullptr,
     int nms_min_pts = 30,

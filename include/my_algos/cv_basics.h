@@ -43,7 +43,10 @@ inline cv::Mat1b float2uint8(
 /**
  * Display a vector of uchar or float images.
  */
-inline void display_images(const std::vector<cv::Mat> images, const std::string WINDOW_NAME = "Images")
+inline void display_images(
+    const std::vector<cv::Mat> images,
+    const std::string WINDOW_NAME = "Images",
+    const int wait_key_ms = 0)
 {
     cv::Mat img0 = images[0];
     const int rows = img0.rows, cols = img0.cols;
@@ -57,7 +60,8 @@ inline void display_images(const std::vector<cv::Mat> images, const std::string 
     }
     cv::namedWindow(WINDOW_NAME, cv::WINDOW_AUTOSIZE);
     cv::imshow(WINDOW_NAME, img_disp);
-    cv::waitKey(0);
+    if (wait_key_ms >= 0)
+        cv::waitKey(wait_key_ms);
     return;
 }
 
