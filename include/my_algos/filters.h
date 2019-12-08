@@ -1,7 +1,7 @@
 #ifndef FILTERS_H
 #define FILTERS_H
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 #include <vector>
 namespace filters
 {

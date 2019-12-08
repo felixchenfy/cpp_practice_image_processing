@@ -1,7 +1,7 @@
 
 
 #include "my_algos/filters.h"
-#include "my_algos/basics.h"
+#include "my_algos/cv_basics.h"
 #include <iostream>
 #include <cmath>
 namespace filters
@@ -146,8 +146,8 @@ cv::Mat1b canny(const cv::Mat1b &src, const float lb, const float ub, const int 
             Ig.at<float>(i, j) = (fabs(dx) + fabs(dy)) * SCALE_GRADIENT_MAG;
             Id.at<float>(i, j) = atan2(dy, dx);
         }
-    // cv::imwrite("canny_gradient_mag.png", basics::float2uint8(Ig / 4.0));
-    // cv::imwrite("canny_gradient_dir.png", basics::float2uint8(Id / M_PI * 127.0 + 127.0));
+    // cv::imwrite("canny_gradient_mag.png", cv_basics::float2uint8(Ig / 4.0));
+    // cv::imwrite("canny_gradient_dir.png", cv_basics::float2uint8(Id / M_PI * 127.0 + 127.0));
 
     // -- Step 3: Non maximum suppression along the gradient direction.
     cv::Mat1f Ig_tmp = Ig.clone();
@@ -171,6 +171,7 @@ cv::Mat1b canny(const cv::Mat1b &src, const float lb, const float ub, const int 
             int c1 = j + d_col, c2 = j - d_col;
             if (Ig.at<float>(i, j) < Ig.at<float>(r1, c1) ||
                 Ig.at<float>(i, j) < Ig.at<float>(r2, c2))
+                // Should be "<", to deal with a row of same gradient.
                 Ig_tmp.at<float>(i, j) = 0.;
         }
     Ig = Ig_tmp;
