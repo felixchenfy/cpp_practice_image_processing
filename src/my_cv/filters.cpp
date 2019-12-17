@@ -10,47 +10,48 @@ namespace filters
 /**
  * Create gaussion kernel.
  */
-inline const Kernel gaussion(int ksize)
+const Kernel gaussion(int ksize)
 {
     assert(ksize % 2 == 1 && ksize >= 3 && ksize <= 101);
-    // if (ksize == 3)
-    // {
-    //     static const Kernel GAUSSION_3x3 =
-    //         {
-    //             {0.0625, 0.125, 0.0625},
-    //             {0.125, 0.25, 0.125},
-    //             {0.0625, 0.125, 0.0625}};
-    //     return GAUSSION_3x3;
-    // }
-    // else if (ksize == 5)
-    // {
 
-    //     static const Kernel GAUSSION_5x5 =
-    //         {{0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625},
-    //          {0.015625, 0.0625, 0.09375, 0.0625, 0.015625},
-    //          {0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375},
-    //          {0.015625, 0.0625, 0.09375, 0.0625, 0.015625},
-    //          {0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625}};
-    //     return GAUSSION_5x5;
-    // }
-    // else
-    // {
-    // How to determine sigma: https://blog.shinelee.me/2018/09-19-%E5%A6%82%E4%BD%95%E7%A1%AE%E5%AE%9A%E9%AB%98%E6%96%AF%E6%BB%A4%E6%B3%A2%E7%9A%84%E6%A0%87%E5%87%86%E5%B7%AE%E5%92%8C%E7%AA%97%E5%8F%A3%E5%A4%A7%E5%B0%8F.html
-    double sigma = 0.3 * ((ksize - 1) * 0.5 - 1) + 0.8;
-    std::vector<std::vector<double>> kernel(ksize, std::vector<double>(ksize, 0.));
-    double c = static_cast<double>(ksize / 2);
-    double sums = 0;
-    for (int i = 0; i < ksize; i++)
-        for (int j = 0; j < ksize; j++)
-        {
-            kernel[i][j] = exp(-(pow(i - c, 2.) + pow(j - c, 2)) / 0.5 / pow(sigma, 2.));
-            sums += kernel[i][j];
-        }
-    for (int i = 0; i < ksize; i++)
-        for (int j = 0; j < ksize; j++)
-            kernel[i][j] /= sums;
-    return kernel;
-    // }
+    if (ksize == 3)
+    {
+        static const Kernel GAUSSION_3x3 =
+            {
+                {0.0625, 0.125, 0.0625},
+                {0.125, 0.25, 0.125},
+                {0.0625, 0.125, 0.0625}};
+        return GAUSSION_3x3;
+    }
+    else if (ksize == 5)
+    {
+
+        static const Kernel GAUSSION_5x5 =
+            {{0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625},
+             {0.015625, 0.0625, 0.09375, 0.0625, 0.015625},
+             {0.0234375, 0.09375, 0.140625, 0.09375, 0.0234375},
+             {0.015625, 0.0625, 0.09375, 0.0625, 0.015625},
+             {0.00390625, 0.015625, 0.0234375, 0.015625, 0.00390625}};
+        return GAUSSION_5x5;
+    }
+    else
+    {
+        // How to determine sigma : https : //blog.shinelee.me/2018/09-19-%E5%A6%82%E4%BD%95%E7%A1%AE%E5%AE%9A%E9%AB%98%E6%96%AF%E6%BB%A4%E6%B3%A2%E7%9A%84%E6%A0%87%E5%87%86%E5%B7%AE%E5%92%8C%E7%AA%97%E5%8F%A3%E5%A4%A7%E5%B0%8F.html
+        double sigma = 0.3 * ((ksize - 1) * 0.5 - 1) + 0.8;
+        std::vector<std::vector<double>> kernel(ksize, std::vector<double>(ksize, 0.));
+        double c = static_cast<double>(ksize / 2);
+        double sums = 0;
+        for (int i = 0; i < ksize; i++)
+            for (int j = 0; j < ksize; j++)
+            {
+                kernel[i][j] = exp(-(pow(i - c, 2.) + pow(j - c, 2)) / 0.5 / pow(sigma, 2.));
+                sums += kernel[i][j];
+            }
+        for (int i = 0; i < ksize; i++)
+            for (int j = 0; j < ksize; j++)
+                kernel[i][j] /= sums;
+        return kernel;
+    }
 }
 
 /**
@@ -133,7 +134,7 @@ cv::Mat1d sobelX(const cv::Mat1b &src)
                            {-1., 0., 1.}};
     const Kernel sub_kernel_1 = {{-1., 0., 1.}};    // Horizontal.
     const Kernel sub_kernel_2 = {{1.}, {2.}, {1.}}; // Vertical.
-    // cv::Mat1d dst = conv2D(conv2D(src, sub_kernel_1), sub_kernel_2); // Faster.
+    // cv::Mat1d dst = conv2D(conv2D(src, sub_kernel_1), sub_kernel_2); // Should be faster.
     cv::Mat1d dst = conv2D(src, kernel);
     return dst;
 }
@@ -146,7 +147,7 @@ cv::Mat1d sobelY(const cv::Mat1b &src)
     // https://en.wikipedia.org/wiki/Sobel_operator
     const Kernel sub_kernel_1 = {{1., 2., 1.}};      // Horizontal.
     const Kernel sub_kernel_2 = {{-1.}, {0.}, {1.}}; // Vertical.
-    // cv::Mat1d dst = conv2D(conv2D(src, sub_kernel_1), sub_kernel_2); // Faster.
+    // cv::Mat1d dst = conv2D(conv2D(src, sub_kernel_1), sub_kernel_2); // Should be faster.
     cv::Mat1d dst = conv2D(src, kernel);
     return dst;
 }
@@ -207,24 +208,28 @@ cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub, const in
     // -- Check input.
     assert(kernel_size == 3); // Only support 3.
 
-    // Scale the gradient's magnitude to match with OpenCV. This is set by my experiment.
+    // -- Settings.
+
+    // Scale the gradient's magnitude to match with OpenCV.
+    // This is set by my experiment.
     constexpr double SCALE_GRADIENT_MAG = 1.75;
+
+    const int r1 = 1;      // radius of the gaussian filter.
+    const int r2 = 1;      // radius of the sobel kernel. I only implemented the ksize=3.
+    const int r = r1 + r2; // Pixels near the image edge within this radius are not processed.
 
     // -- Step 1:  Compute image gradient Ix, Iy.
     // Blur image.
-    const int r1 = 1; // radius of the gaussian filter.
-    cv::Mat src_blurred = conv2D(src, gaussion(3));
+    cv::Mat src_blurred = conv2D(src, gaussion(r1 * 2 + 1));
     src_blurred.convertTo(src_blurred, CV_8UC1); // double to uchar.
 
     // Sobel gradient.
-    const int r2 = 1;                   // radius of the sobel kernel.
     cv::Mat1d Ix = sobelX(src_blurred); // Gradient x.
     cv::Mat1d Iy = sobelY(src_blurred); // Gradient y.
 
     // -- Step 2: Compute gradient's magnitude Ig and direction Id.
     cv::Mat1d Ig = cv::Mat::zeros(src.size(), CV_64FC1); // Maginitude.
     cv::Mat1d Id = cv::Mat::zeros(src.size(), CV_64FC1); // Direction.
-    const int r = r1 + r2;                               // Total offset.
     for (int i = r; i < src.rows - r; ++i)
         for (int j = r; j < src.cols - r; ++j)
         {
@@ -247,16 +252,18 @@ cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub, const in
         {+1, 00},
         {+1, +1},
         {00, +1},
-        {-1, +1}, // +180 degrees.
+        {-1, +1}, // +145 degrees.
     };
     for (int i = r; i < src.rows - r; ++i)
         for (int j = r; j < src.cols - r; ++j)
         {
             int index = lround(Id.at<double>(i, j) / M_PI_4) + 4; // 0~7
-            index = index == 8 ? 0 : index;                       // 8 means 180 degrees, which is the same as -180 degrees.
-            int d_row = neighbors.at(index).y, d_col = neighbors.at(index).x;
-            int r1 = i + d_row, r2 = i - d_row;
-            int c1 = j + d_col, c2 = j - d_col;
+            // 8 means 180 degrees, which is the same as -180 degrees.
+            index = index == 8 ? 0 : index; // So 8 is the same as 0.
+
+            const int d_row = neighbors.at(index).y, d_col = neighbors.at(index).x;
+            const int r1 = i + d_row, r2 = i - d_row;
+            const int c1 = j + d_col, c2 = j - d_col;
             if (Ig.at<double>(i, j) < Ig.at<double>(r1, c1) ||
                 Ig.at<double>(i, j) < Ig.at<double>(r2, c2))
                 // Should be "<", to deal with a row of same gradient.
@@ -264,15 +271,15 @@ cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub, const in
         }
     Ig = Ig_tmp;
 
-    // -- Mask pixels (i, j) as edge if Ig[i, j] >= ub.
+    // -- Mask pixels (i, j) as edge if
+    //  (1) Ig[i, j] >= ub.
+    //  (2) Ig[i, j] >= lb and it's connected to any edge pixel.
     cv::Mat1b res_mask = cv::Mat::zeros(src.size(), CV_8U);
     cv::Mat1b visited = cv::Mat::zeros(src.size(), CV_8U);
     for (int i = 0; i < src.rows; ++i)
         for (int j = 0; j < src.cols; ++j)
-        {
             if (Ig.at<double>(i, j) >= ub)
                 _cannyDfs(Ig, neighbors, &visited, &res_mask, i, j, lb);
-        }
 
     return res_mask;
 }
