@@ -11,6 +11,7 @@
  *      isLocalMax
  *      setNeighborsToZero
  *      setBlockToZero
+ *      checkLocalMaxAndSuppress
  */
 
 #include <opencv2/core.hpp>
@@ -166,6 +167,42 @@ void setBlockToZero(cv::Mat *img, int row, int col, int radius)
                 continue;
             img->at<pixel_type>(r, c) = static_cast<pixel_type>(0);
         }
+}
+
+
+/**
+ * Check if img[row, col] is >= {all its neighbor elements}.
+ * Meanwhile, if a neighbor pixel is < center, 
+ *      set it's mask value to zero.
+ * This for function is used for non-maximum suppression on heatmap.
+ * @param radius Radius of the neighbor square.
+ * @param mask [out] Small pixels' mask will be set as zero.
+ * @return bool.
+ */
+template <typename pixel_type>
+bool checkLocalMaxAndSuppress(
+    const cv::Mat &img,
+    const int row, const int col, const int radius,
+    cv::Mat1b *mask)
+{
+    pixel_type center_value = img.at<pixel_type>(row, col);
+    for (int m = -radius; m <= radius; m++)
+        for (int n = -radius; n <= radius; n++)
+        {
+            if (m == 0 || n == 0)
+                continue;
+            int r = row + m, c = col + n;
+            if (r < 0 || c < 0 || r >= img.rows || c >= img.cols)
+                continue;
+            if (center_value < img.at<pixel_type>(r, c)) // not >=
+            {
+                mask->at<uchar>(row, col) = 0;
+                return false;
+            }
+            else if (center_value > img.at<pixel_type>(r, c))
+                mask->at<uchar>(r, c) = 0;
+        }
+    return true;
 }
 
 } // namespace cv_commons

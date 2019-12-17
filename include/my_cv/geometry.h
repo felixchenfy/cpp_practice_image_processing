@@ -60,40 +60,6 @@ detectLineByHoughTransform(
     const int nms_radius = 10);
 
 /**
- * Check if img[row, col] is >= {all its neighbor elements}.
- * Meanwhile, if a neighbor pixel is < center, 
- *      set it's mask value to zero.
- * @param radius Radius of the neighbor square.
- * @param mask [out] Small pixels' mask will be set as zero.
- * @return bool.
- */
-template <typename pixel_type>
-bool checkLocalMaxAndSuppress(
-    const cv::Mat &img,
-    const int row, const int col, const int radius,
-    cv::Mat1b *mask)
-{
-    pixel_type center_value = img.at<pixel_type>(row, col);
-    for (int m = -radius; m <= radius; m++)
-        for (int n = -radius; n <= radius; n++)
-        {
-            if (m == 0 || n == 0)
-                continue;
-            int r = row + m, c = col + n;
-            if (r < 0 || c < 0 || r >= img.rows || c >= img.cols)
-                continue;
-            if (center_value < img.at<pixel_type>(r, c)) // not >=
-            {
-                mask->at<uchar>(row, col) = 0;
-                return false;
-            }
-            else if (center_value > img.at<pixel_type>(r, c))
-                mask->at<uchar>(r, c) = 0;
-        }
-    return true;
-}
-
-/**
  * Non-maximum suppression on heatmap.
  * @param heaptmap An image of with pixel_type.
  * @param radius Radius of NMS.
@@ -123,13 +89,13 @@ nms(
 
             // -- Compare with neighbors to see if the center is a local max.
             // Meanwhile, unmask neighbor pixels that are smaller than center.
-            const bool is_max = checkLocalMaxAndSuppress<pixel_type>(
+            const bool is_max = cv_commons::checkLocalMaxAndSuppress<pixel_type>(
                 heatmap, i, j, radius, &mask);
 
             // -- Process if it's max.
             if (is_max)
             {
-                // Set all neighbors to zero. 
+                // Set all neighbors to zero.
                 // (Even if the center and neighbor has same score.)
                 cv_commons::setNeighborsToZero<uchar>(&mask, i, j, radius);
                 peaks.push_back({score, {j, i}});
