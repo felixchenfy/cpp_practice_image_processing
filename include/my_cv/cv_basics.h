@@ -1,6 +1,18 @@
 #ifndef BASICS_H
 #define BASICS_H
 
+/**
+ * Functions:
+ *      readImage
+ *      gray2color
+ *      any2color
+ *      float2uint8
+ *      display_images
+ *      isLocalMax
+ *      setNeighborsToZero
+ *      setBlockToZero
+ */
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -39,6 +51,17 @@ inline cv::Mat3b gray2color(const cv::Mat1b &gray)
     return color;
 }
 
+// Convert any image to 8UC3 color image.
+inline cv::Mat3b any2color(const cv::Mat &image)
+{
+    assert(image.channels() == 1 || image.channels() == 3);
+    cv::Mat I_uint8;
+    image.convertTo(I_uint8, CV_8U); // To uint8.
+    if (I_uint8.channels() == 1)
+        cv::cvtColor(I_uint8, I_uint8, cv::COLOR_GRAY2BGR);
+    return I_uint8;
+}
+
 /**
  * Convert image from float/double to uchar by:
  *      ((abs(gray) * scale) + inc_value).to_uint8()
@@ -57,19 +80,9 @@ inline cv::Mat float2uint8(
     return dst;
 }
 
-// Convert image to 8UC3 image.
-inline cv::Mat3b to8UC3(const cv::Mat &image)
-{
-    assert(image.channels() == 1 || image.channels() == 3);
-    cv::Mat I_uint8;
-    image.convertTo(I_uint8, CV_8U); // To uint8.
-    if (I_uint8.channels() == 1)
-        cv::cvtColor(I_uint8, I_uint8, cv::COLOR_GRAY2BGR);
-    return I_uint8;
-}
-
 /**
- * Display a vector of uchar or double images.
+ * Display a vector of images.
+ * The image can be uint8/float/double, 1 or 3 channels.
  */
 inline void display_images(
     const std::vector<cv::Mat> images,
@@ -78,12 +91,12 @@ inline void display_images(
 {
     cv::Mat img0 = images[0];
     const int rows = img0.rows, cols = img0.cols;
-    cv::Mat img_disp = to8UC3(img0);
+    cv::Mat img_disp = any2color(img0);
     for (int i = 1; i < images.size(); i++)
     {
         const cv::Mat &image = images[i];
         assert(image.rows == rows && image.cols == cols);
-        cv::Mat next_image = to8UC3(image);
+        cv::Mat next_image = any2color(image);
         cv::hconcat(img_disp, next_image, img_disp);
     }
     cv::namedWindow(WINDOW_NAME, cv::WINDOW_AUTOSIZE);
@@ -94,7 +107,7 @@ inline void display_images(
 }
 
 /**
- * Check if img[row, col] is >= all its neighbor elements.
+ * Check if img[row, col] is >= {all its neighbor elements}.
  * @param radius Radius of the neighbor square.
  */
 template <typename pixel_type>
@@ -137,7 +150,8 @@ void setNeighborsToZero(cv::Mat *img, int row, int col, int radius)
 
 /**
  * Set a block of pixels around img[row, col] to zero.
- * (The only difference to setNeighborsToZero() is that the center pixel is also set as zero.)
+ * (The only difference to setNeighborsToZero() is that 
+ *  the center pixel is also set as zero.)
  * @param radius Radius of the block.
  */
 template <typename pixel_type>

@@ -1,6 +1,13 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
+/**
+ * Classes and functions:
+ *      struct Line2d: Line represented in polar coordinate.
+ *      detectLineByHoughTransform: Hough line detection.
+ *      nms: non-maximum suppression.
+ */
+
 #include "my_cv/cv_basics.h"
 #include <vector>
 #include <iostream>
@@ -11,7 +18,7 @@ namespace geometry
 {
 
 /**
- * 2D line represented in polar coordinate.
+ * 2D line. Represented in polar coordinate.
  */
 struct Line2d
 {
@@ -38,11 +45,11 @@ struct Line2d
 /**
  * Detect lines by Hough Line detection algorithm.
  * @param edge Image of edge. A pixel is edge if it has a non-zero value.
- * @param dst_polar Image of Hough Transform's result. 
+ * @param dst_polar (Optional) Image of Hough Transform's result. 
  *      Row number is 180, representing 0~179 degrees; 
  *      Column number is the diagonal length of the input image. 
  * @param nms_min_pts Min points on a line. 
- * @param nms_radius Radius of doing non-maximum suppression.
+ * @param nms_radius Radius of non-maximum suppression.
  * @return Parameters of each detected line.
  */
 std::vector<Line2d>
@@ -54,7 +61,7 @@ detectLineByHoughTransform(
 
 /**
  * Non-maximum suppression (NMS).
- * @param heaptmap An image that we want to find its local peaks.
+ * @param heaptmap The input image. We want to find its local peaks.
  * @param radius Radius of NMS.
  * @return (x, y) position of each peak point in heatmap.
  *  The points are sort from high score to low score.
