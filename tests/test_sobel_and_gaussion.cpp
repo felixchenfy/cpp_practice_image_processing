@@ -48,10 +48,10 @@ void test_sobel_and_gaussion()
     // -- Convert image from double to uint8 for display.
     constexpr bool TAKE_ABS = true;
     constexpr double SCALE_GRAD = 0.3;
-    cv::Mat1b disp_edge_x = cv_basics::double2uint8(edge_x, TAKE_ABS, SCALE_GRAD);
-    cv::Mat1b disp_edge_y = cv_basics::double2uint8(edge_y, TAKE_ABS, SCALE_GRAD);
-    cv::Mat1b disp_edge = cv_basics::double2uint8(edge, TAKE_ABS, SCALE_GRAD);
-    cv::Mat1b disp_gaussion = cv_basics::double2uint8(gaussion);
+    cv::Mat1b disp_edge_x = cv_basics::float2uint8(edge_x, TAKE_ABS, SCALE_GRAD);
+    cv::Mat1b disp_edge_y = cv_basics::float2uint8(edge_y, TAKE_ABS, SCALE_GRAD);
+    cv::Mat1b disp_edge = cv_basics::float2uint8(edge, TAKE_ABS, SCALE_GRAD);
+    cv::Mat1b disp_gaussion = cv_basics::float2uint8(gaussion);
 
     // -- Show image.
     const std::string WINDOW_NAME =

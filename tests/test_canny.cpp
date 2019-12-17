@@ -30,7 +30,7 @@ void test_canny()
 
     // -- For comparison, compute sobel.
     constexpr bool TAKE_ABS = true;
-    cv::Mat1b edge_sobel = cv_basics::double2uint8(filters::sobel(src_gray), TAKE_ABS);
+    cv::Mat1b edge_sobel = cv_basics::float2uint8(filters::sobel(src_gray), TAKE_ABS);
 
     // -- Show image.
     const std::string WINDOW_NAME = "Original / Sobel / Canny(Mine) / Canny(OpenCV)";

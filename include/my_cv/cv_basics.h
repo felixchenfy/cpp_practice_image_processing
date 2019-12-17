@@ -29,7 +29,7 @@ inline cv::Mat readImage(const std::string &filename = "")
 }
 
 /**
- * Gray image to color image.
+ * Gray image to color image by cv::cvtColor.
  */
 inline cv::Mat3b gray2color(const cv::Mat1b &gray)
 {
@@ -40,21 +40,32 @@ inline cv::Mat3b gray2color(const cv::Mat1b &gray)
 }
 
 /**
- * double image to uchar image.
- * ((abs(gray) * scale) + inc_value).to_uint8()
+ * Convert image from float/double to uchar by:
+ *      ((abs(gray) * scale) + inc_value).to_uint8()
+ * The channel number is not changed.
  */
-inline cv::Mat1b double2uint8(
-    const cv::Mat1d &gray,
+inline cv::Mat float2uint8(
+    const cv::Mat &gray,
     bool take_abs = false,
     double scale = 1.0,
     double inc_value = 0.)
 {
-    assert(gray.channels() == 1);
-    cv::Mat1b dst;
-    cv::Mat1d tmp = take_abs ? cv::abs(gray) : gray;
-    tmp = tmp * scale + inc_value; // Change value.
-    tmp.convertTo(dst, CV_8UC1);   // To uint8.
+    cv::Mat tmp = take_abs ? cv::abs(gray) : gray; // Take abs.
+    tmp = tmp * scale + inc_value;                 // Scale and shift value.
+    cv::Mat dst;
+    tmp.convertTo(dst, CV_8U); // To uint8.
     return dst;
+}
+
+// Convert image to uint8 single channel.
+inline cv::Mat3b to8UC3(const cv::Mat &image)
+{
+    assert(image.channels() == 1 || image.channels() == 3);
+    cv::Mat I_uint8;
+    image.convertTo(I_uint8, CV_8U); // To uint8.
+    if (I_uint8.channels() == 1)
+        cv::cvtColor(I_uint8, I_uint8, cv::COLOR_GRAY2BGR);
+    return I_uint8;
 }
 
 /**
@@ -67,12 +78,12 @@ inline void display_images(
 {
     cv::Mat img0 = images[0];
     const int rows = img0.rows, cols = img0.cols;
-    cv::Mat img_disp = img0.channels() == 3 ? img0 : gray2color(img0);
+    cv::Mat img_disp = to8UC3(img0);
     for (int i = 1; i < images.size(); i++)
     {
         const cv::Mat &image = images[i];
         assert(image.rows == rows && image.cols == cols);
-        cv::Mat next_image = image.channels() == 3 ? image : gray2color(image);
+        cv::Mat next_image = to8UC3(image);
         cv::hconcat(img_disp, next_image, img_disp);
     }
     cv::namedWindow(WINDOW_NAME, cv::WINDOW_AUTOSIZE);
