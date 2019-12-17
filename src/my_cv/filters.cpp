@@ -1,11 +1,12 @@
 
 
-#include "my_algos/filters.h"
-#include "my_algos/cv_basics.h"
+#include "my_cv/filters.h"
+#include "my_cv/cv_basics.h"
 #include <iostream>
 #include <cmath>
 namespace filters
 {
+
 // typedef unsigned char uchar;
 
 /**

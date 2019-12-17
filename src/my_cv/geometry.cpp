@@ -1,7 +1,7 @@
-#include "my_algos/cv_basics.h"
-#include "my_algos/geometry.h"
-#include "my_algos/maths.h"
-#include "my_algos/cv_basics.h"
+#include "my_cv/cv_basics.h"
+#include "my_cv/geometry.h"
+#include "my_cv/maths.h"
+#include "my_cv/cv_basics.h"
 
 #include <opencv2/core.hpp>
 #include <cmath>

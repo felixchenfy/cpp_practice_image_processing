@@ -1,7 +1,7 @@
 
-#include "my_algos/geometry.h"
-#include "my_algos/filters.h"
-#include "my_algos/cv_basics.h"
+#include "my_cv/geometry.h"
+#include "my_cv/filters.h"
+#include "my_cv/cv_basics.h"
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"

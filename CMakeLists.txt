@@ -20,7 +20,7 @@ set( THIRD_PARTY_LIBS
 )
 
 # -- My library
-add_subdirectory( src/my_algos )
+add_subdirectory( src/my_cv )
 
 # -- Merge libraries
 set( ALL_LIBS 

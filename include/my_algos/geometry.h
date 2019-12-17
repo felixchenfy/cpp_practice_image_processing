@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
 
-#include "my_algos/cv_basics.h"
+#include "my_cv/cv_basics.h"
 #include <vector>
 #include <iostream>
 #include <opencv2/core.hpp>
