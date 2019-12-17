@@ -75,17 +75,55 @@ cv::Mat1d conv2D(const cv::Mat &src, const Kernel &kernel)
 
     // Convolute the image.
     cv::Mat1d dst = cv::Mat::zeros(src.rows, src.cols, CV_64FC1); // Pad zeros.
-    for (int i = r1; i < src.rows - r1; ++i)
-        for (int j = r2; j < src.cols - r2; ++j)
+    for (int i = 0; i < src.rows; ++i)
+        for (int j = 0; j < src.cols; ++j)
         {
             double sums = 0;
-            for (int m = -r1; m <= r1; m++)
-                for (int n = -r2; n <= r2; n++)
-                    sums += src_64FC1.at<double>(i + m, j + n) * kernel[m + r1][n + r2];
-            dst.at<double>(i, j) = sums;
+            if (!(i < r1 || i >= src.rows - r1 || j < r2 || j >= src.cols - r2))
+            {
+                // The normal convolution.
+                for (int m = -r1; m <= r1; m++)
+                    for (int n = -r2; n <= r2; n++)
+                        sums += src_64FC1.at<double>(i + m, j + n) * kernel[m + r1][n + r2];
+                dst.at<double>(i, j) = sums;
+            }
+            else // Corner case: Convolution is outside the image.
+            {
+                if (true)
+                { // Method 1: Replicate the pixels near the edge.
+                    for (int m = -r1; m <= r1; m++)
+                        for (int n = -r2; n <= r2; n++)
+                        {
+                            int ii = i + m, jj = j + n;
+                            ii = (ii < 0 ? 0 : ii);
+                            jj = (jj < 0 ? 0 : jj);
+                            ii = ii >= src.rows ? src.rows : ii;
+                            jj = ii >= src.cols ? src.cols : jj;
+                            sums += src_64FC1.at<double>(ii, jj) * kernel[m + r1][n + r2];
+                        }
+                }
+                else // Method 2: Only use the pixels inside the image.
+                // TODO: In this case, the weighted sum should depend on the type of the kernel,
+                //      whether sums to zero or sums to one.
+                //      I havne't implemented this.
+                {
+                    int cnt_valid = 0;
+                    for (int m = -r1; m <= r1; m++)
+                        for (int n = -r2; n <= r2; n++)
+                        {
+                            int ii = i + m, jj = j + n;
+                            if (ii < 0 || ii >= src.rows || jj < 0 || jj >= src.cols)
+                                continue;
+                            sums += src_64FC1.at<double>(ii, jj) * kernel[m + r1][n + r2];
+                            cnt_valid++;
+                        }
+                    sums = sums / (r1 * r2) * cnt_valid;
+                }
+                dst.at<double>(i, j) = sums;
+            }
         }
     return dst;
-}
+} // namespace filters
 
 cv::Mat1d sobelX(const cv::Mat1b &src)
 {
