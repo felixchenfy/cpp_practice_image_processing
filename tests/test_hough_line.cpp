@@ -11,25 +11,13 @@
 #include <cmath>
 #include <string>
 
-cv::Mat readImage(const std::string &filename = "")
-{
-    cv::Mat src = imread(cv::samples::findFile(filename), cv::IMREAD_COLOR); // Load an image
-    if (src.empty())
-    {
-        std::cout << "Could not open or find the image: \n"
-                  << filename << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return src;
-}
-
 void test_hough_line()
 {
 
     // -- Read image
     const std::string filename = "data/color_chessboard.jpg";
     // const std::string filename = "data/simple_shapes2.png";
-    cv::Mat3b src_color = readImage(filename);
+    cv::Mat3b src_color = cv_basics::readImage(filename);
     cv::Mat1b src_gray;
     cv::cvtColor(src_color, src_gray, cv::COLOR_BGR2GRAY);
 

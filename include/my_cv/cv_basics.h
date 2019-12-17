@@ -7,9 +7,26 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 namespace cv_basics
 {
+
+/**
+ * Read a color image from disk.
+ * If image path is invalid, print the filename and then exit the program.
+ */
+inline cv::Mat readImage(const std::string &filename = "")
+{
+    cv::Mat src = imread(cv::samples::findFile(filename), cv::IMREAD_COLOR); // Load an image
+    if (src.empty())
+    {
+        std::cout << "Could not open or find the image: \n"
+                  << filename << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return src;
+}
 
 /**
  * Gray image to color image.
@@ -24,7 +41,7 @@ inline cv::Mat3b gray2color(const cv::Mat1b &gray)
 
 /**
  * double image to uchar image.
- * (( abs(gray) * scale) + inc_value).to_uint8()
+ * ((abs(gray) * scale) + inc_value).to_uint8()
  */
 inline cv::Mat1b double2uint8(
     const cv::Mat1d &gray,

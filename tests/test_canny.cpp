@@ -10,18 +10,6 @@
 #include <cmath>
 #include <string>
 
-cv::Mat readImage(const std::string &filename = "")
-{
-    cv::Mat src = imread(cv::samples::findFile(filename), cv::IMREAD_COLOR); // Load an image
-    if (src.empty())
-    {
-        std::cout << "Could not open or find the image: \n"
-                  << filename << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return src;
-}
-
 void test_canny()
 {
 
@@ -29,7 +17,7 @@ void test_canny()
     const std::string filename = "data/color_chessboard.jpg";
     // const std::string filename = "data/simple_shapes2.png";
     cv::Mat src_gray;
-    cv::cvtColor(readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(cv_basics::readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Canny(Mine).
     const double lb = 70.0, ub = 210.0;

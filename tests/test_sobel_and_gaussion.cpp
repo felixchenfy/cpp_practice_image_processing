@@ -22,18 +22,6 @@ bool assert_kernel_sums_to_one(const Kernel &kernel, const double EPS = 0.0001)
     assert(abs(1.0 - sums) <= EPS);
 }
 
-cv::Mat readImage(const std::string &filename = "")
-{
-    cv::Mat src = imread(cv::samples::findFile(filename), cv::IMREAD_COLOR); // Load an image
-    if (src.empty())
-    {
-        std::cout << "Could not open or find the image: \n"
-                  << filename << std::endl;
-        exit(EXIT_FAILURE);
-    }
-    return src;
-}
-
 void test_kernel_sums_to_one()
 {
     //  Test whether Gaussian kernels sum to one.
@@ -49,7 +37,7 @@ void test_sobel_and_gaussion()
     const std::string filename = "data/color_chessboard.jpg";
     // const std::string filename = "data/simple_shapes2.png";
     cv::Mat src_gray;
-    cv::cvtColor(readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(cv_basics::readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Filter
     cv::Mat1f edge_x = filters::sobelX(src_gray);
