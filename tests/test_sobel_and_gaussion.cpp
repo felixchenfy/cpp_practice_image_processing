@@ -25,9 +25,9 @@ bool assert_kernel_sums_to_one(const Kernel &kernel, const double EPS = 0.0001)
 void test_kernel_sums_to_one()
 {
     //  Test whether Gaussian kernels sum to one.
-    assert_kernel_sums_to_one(filters::gaussion(3));
-    assert_kernel_sums_to_one(filters::gaussion(5));
-    assert_kernel_sums_to_one(filters::gaussion(7));
+    assert_kernel_sums_to_one(filters::getGaussionKernel(3));
+    assert_kernel_sums_to_one(filters::getGaussionKernel(5));
+    assert_kernel_sums_to_one(filters::getGaussionKernel(7));
 }
 
 void test_sobel_and_gaussion()
@@ -43,7 +43,7 @@ void test_sobel_and_gaussion()
     cv::Mat1f edge_x = filters::sobelX(src_gray);
     cv::Mat1f edge_y = filters::sobelY(src_gray);
     cv::Mat1f edge = filters::sobel(src_gray);
-    cv::Mat1f gaussion = filters::conv2D(src_gray, filters::gaussion(21));
+    cv::Mat1f gaussion = filters::gaussion(src_gray, 21);
 
     // -- Convert image from double to uint8 for display.
     constexpr bool TAKE_ABS = true;
@@ -51,13 +51,12 @@ void test_sobel_and_gaussion()
     cv::Mat1b disp_edge_x = cv_basics::float2uint8(edge_x, TAKE_ABS, SCALE_GRAD);
     cv::Mat1b disp_edge_y = cv_basics::float2uint8(edge_y, TAKE_ABS, SCALE_GRAD);
     cv::Mat1b disp_edge = cv_basics::float2uint8(edge, TAKE_ABS, SCALE_GRAD);
-    cv::Mat1b disp_gaussion = cv_basics::float2uint8(gaussion);
 
     // -- Show image.
     const std::string WINDOW_NAME =
         "Original     /     Gaussion     /     SobelX     /     SobelY     /     Sobel";
     cv_basics::display_images(
-        {src_gray, disp_gaussion, disp_edge_x, disp_edge_y, disp_edge},
+        {src_gray, gaussion, disp_edge_x, disp_edge_y, disp_edge},
         WINDOW_NAME);
 }
 

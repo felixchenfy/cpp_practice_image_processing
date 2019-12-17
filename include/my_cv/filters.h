@@ -1,5 +1,5 @@
-#ifndef FILTERS_H
-#define FILTERS_H
+#ifndef MY_CV_FILTERS_H
+#define MY_CV_FILTERS_H
 
 #include <opencv2/core.hpp>
 #include <vector>
@@ -7,8 +7,9 @@ namespace filters
 {
 
 typedef std::vector<std::vector<double>> Kernel;
-const Kernel gaussion(int ksize = 3); // Create gaussion kernel.
+const Kernel getGaussionKernel(int ksize = 3); // Create gaussion kernel.
 cv::Mat1d conv2D(const cv::Mat &src, const Kernel &kernel);
+cv::Mat1b gaussion(const cv::Mat1b &src, int ksize = 3);
 cv::Mat1d sobelX(const cv::Mat1b &src);
 cv::Mat1d sobelY(const cv::Mat1b &src);
 cv::Mat1d sobel(const cv::Mat1b &src);

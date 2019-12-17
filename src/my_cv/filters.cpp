@@ -10,7 +10,7 @@ namespace filters
 /**
  * Create gaussion kernel.
  */
-const Kernel gaussion(int ksize)
+const Kernel getGaussionKernel(int ksize)
 {
     assert(ksize % 2 == 1 && ksize >= 3 && ksize <= 101);
 
@@ -124,7 +124,15 @@ cv::Mat1d conv2D(const cv::Mat &src, const Kernel &kernel)
             }
         }
     return dst;
-} // namespace filters
+}
+
+cv::Mat1b gaussion(const cv::Mat1b &src, int ksize)
+{
+    const Kernel kernel = filters::getGaussionKernel(ksize);
+    cv::Mat1b gaussion = cv_basics::float2uint8(
+        filters::conv2D(src, kernel));
+    return gaussion;
+}
 
 cv::Mat1d sobelX(const cv::Mat1b &src)
 {
@@ -220,8 +228,7 @@ cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub, const in
 
     // -- Step 1:  Compute image gradient Ix, Iy.
     // Blur image.
-    cv::Mat src_blurred = conv2D(src, gaussion(r1 * 2 + 1));
-    src_blurred.convertTo(src_blurred, CV_8UC1); // double to uchar.
+    cv::Mat1b src_blurred = gaussion(src, r1 * 2 + 1);
 
     // Sobel gradient.
     cv::Mat1d Ix = sobelX(src_blurred); // Gradient x.

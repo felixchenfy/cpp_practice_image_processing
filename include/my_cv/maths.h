@@ -1,6 +1,6 @@
 
-#ifndef MATHS_H
-#define MATHS_H
+#ifndef MY_CV_MATHS_H
+#define MY_CV_MATHS_H
 
 #include <cmath>
 

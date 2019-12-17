@@ -1,5 +1,5 @@
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#ifndef MY_CV_GEOMETRY_H
+#define MY_CV_GEOMETRY_H
 
 /**
  * Classes and functions:

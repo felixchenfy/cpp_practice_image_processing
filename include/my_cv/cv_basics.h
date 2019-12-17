@@ -1,5 +1,5 @@
-#ifndef BASICS_H
-#define BASICS_H
+#ifndef MY_CV_BASICS_H
+#define MY_CV_BASICS_H
 
 /**
  * Functions:
