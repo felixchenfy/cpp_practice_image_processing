@@ -9,7 +9,7 @@ namespace filters
 typedef std::vector<std::vector<double>> Kernel;
 const Kernel getGaussionKernel(int ksize = 3); // Create gaussion kernel.
 cv::Mat1d conv2D(const cv::Mat &src, const Kernel &kernel);
-cv::Mat1b gaussion(const cv::Mat1b &src, int ksize = 3);
+cv::Mat gaussion(const cv::Mat &src, int ksize = 3); // Output same type as input.
 cv::Mat1d sobelX(const cv::Mat1b &src);
 cv::Mat1d sobelY(const cv::Mat1b &src);
 cv::Mat1d sobel(const cv::Mat1b &src);

@@ -126,12 +126,16 @@ cv::Mat1d conv2D(const cv::Mat &src, const Kernel &kernel)
     return dst;
 }
 
-cv::Mat1b gaussion(const cv::Mat1b &src, int ksize)
+/**
+ * Gaussion blur. The output type is the same as the input.
+ */
+cv::Mat gaussion(const cv::Mat &src, int ksize)
 {
     const Kernel kernel = filters::getGaussionKernel(ksize);
-    cv::Mat1b gaussion = cv_basics::float2uint8(
-        filters::conv2D(src, kernel));
-    return gaussion;
+    cv::Mat blurred = filters::conv2D(src, kernel);
+    if (blurred.depth() != src.depth())
+        blurred.convertTo(blurred, src.depth());
+    return blurred;
 }
 
 cv::Mat1d sobelX(const cv::Mat1b &src)
