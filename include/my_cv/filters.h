@@ -15,8 +15,5 @@ cv::Mat1d sobelY(const cv::Mat1b &src);
 cv::Mat1d sobel(const cv::Mat1b &src);
 cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub);
 
-// cv::Mat1b sobel(const cv::Mat1b &src, int low_thresh, int high_thresh);
-// cv::Mat1b calcImageGradientMagnitudeAndDirection(cv::Mat1b src);
-
 } // namespace filters
 #endif

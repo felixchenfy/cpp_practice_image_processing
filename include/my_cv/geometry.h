@@ -8,7 +8,7 @@
  *      nms: non-maximum suppression.
  */
 
-#include "my_cv/cv_commons.h"
+#include "my_cv/cv_commons.hpp"
 #include <vector>
 #include <iostream>
 #include <opencv2/core.hpp>
@@ -97,7 +97,7 @@ bool checkLocalMaxAndSuppress(
  * Non-maximum suppression on heatmap.
  * @param heaptmap An image of with pixel_type.
  * @param radius Radius of NMS.
- * @return (x, y) position of each peak point in heatmap.
+ * @return {score, (x, y) position} of each peak point in heatmap.
  *  The points are sort from high score to low score.
  */
 template <typename pixel_type>
@@ -129,7 +129,8 @@ nms(
             // -- Process if it's max.
             if (is_max)
             {
-                // Set all neighbors to zero (Even if the score is the same.)
+                // Set all neighbors to zero. 
+                // (Even if the center and neighbor has same score.)
                 cv_commons::setNeighborsToZero<uchar>(&mask, i, j, radius);
                 peaks.push_back({score, {j, i}});
             }

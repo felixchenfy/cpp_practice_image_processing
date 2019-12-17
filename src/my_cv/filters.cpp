@@ -1,7 +1,7 @@
 
 
 #include "my_cv/filters.h"
-#include "my_cv/cv_commons.h"
+#include "my_cv/cv_commons.hpp"
 #include <iostream>
 #include <cmath>
 namespace filters

@@ -27,7 +27,7 @@ set( ALL_LIBS
     ${OpenCV_LIBS}
     filters
     geometry
-    maths
+    keypoints
 )
 
 # -- Tests
