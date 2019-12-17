@@ -34,35 +34,15 @@ cv::Mat readImage(const std::string &filename = "")
     return src;
 }
 
-void test_kernels_values()
+void test_kernel_sums_to_one()
 {
     //  Test whether Gaussian kernels sum to one.
     assert_kernel_sums_to_one(filters::gaussion(3));
+    assert_kernel_sums_to_one(filters::gaussion(5));
     assert_kernel_sums_to_one(filters::gaussion(7));
 }
 
-void test_conv2d()
-{
-
-    // -- Read image
-    // const std::string filename = "data/color_chessboard.jpg";
-    const std::string filename = "data/simple_shapes2.png";
-    cv::Mat src = readImage(filename);
-    cv::Mat src_gray;
-    cv::cvtColor(src, src_gray, cv::COLOR_BGR2GRAY);
-    std::cout << "Image size: " << src.size() << std::endl; // [cols, rows] = [320, 240]
-
-    // -- Filter
-    cv::Mat blurred;
-    blurred = filters::conv2D(src_gray, filters::gaussion(5));
-    blurred = filters::conv2D(blurred, filters::gaussion(5));
-
-    // -- Show image
-    const std::string WINDOW_NAME = "Color/Gray/Blurred";
-    cv_basics::display_images({src, src_gray, cv_basics::float2uint8(blurred)}, WINDOW_NAME);
-}
-
-void test_sobel()
+void test_sobel_and_gaussion()
 {
 
     // -- Read image
@@ -75,6 +55,7 @@ void test_sobel()
     cv::Mat1f edge_x = filters::sobelX(src_gray);
     cv::Mat1f edge_y = filters::sobelY(src_gray);
     cv::Mat1f edge = filters::sobel(src_gray);
+    cv::Mat1f gaussion = filters::conv2D(src_gray, filters::gaussion(5));
 
     // -- Convert image from float to uint8 for display.
     constexpr bool TAKE_ABS = true;
@@ -82,16 +63,17 @@ void test_sobel()
     cv::Mat1b disp_edge_x = cv_basics::float2uint8(edge_x, TAKE_ABS, SCALE_GRAD);
     cv::Mat1b disp_edge_y = cv_basics::float2uint8(edge_y, TAKE_ABS, SCALE_GRAD);
     cv::Mat1b disp_edge = cv_basics::float2uint8(edge, TAKE_ABS, SCALE_GRAD);
+    cv::Mat1b disp_gaussion = cv_basics::float2uint8(gaussion);
 
     // -- Show image.
-    const std::string WINDOW_NAME = "Original / SobelX / SobelY / Sobel";
+    const std::string WINDOW_NAME = "Original / SobelX / SobelY / Sobel / Gaussion";
     cv_basics::display_images(
-        {src_gray, disp_edge_x, disp_edge_y, disp_edge},
+        {src_gray, disp_edge_x, disp_edge_y, disp_edge, disp_gaussion},
         WINDOW_NAME);
 }
 
 int main(int argc, char const *argv[])
 {
-    test_conv2d();
-    // test_sobel();
+    test_kernel_sums_to_one();
+    test_sobel_and_gaussion();
 }
