@@ -56,8 +56,8 @@ std::vector<Line2d>
 detectLineByHoughTransform(
     const cv::Mat1b &edge,
     cv::Mat1i *dst_polar = nullptr,
-    int nms_min_pts = 30,
-    int nms_radius = 10);
+    const int nms_min_pts = 30,
+    const int nms_radius = 10);
 
 /**
  * Non-maximum suppression (NMS).
@@ -67,14 +67,14 @@ detectLineByHoughTransform(
  *  The points are sort from high score to low score.
  */
 template <typename pixel_type>
-std::vector<cv::Point2i> nms(
+std::vector<std::pair<pixel_type, cv::Point2i>> nms(
     const cv::Mat &heatmap,
     const int min_value,
     const int radius)
 {
     assert(heatmap.channels() == 1);
 
-    // Detect local max and store the (score, position).
+    // -- Detect local max and store the (score, position).
     cv::Mat mask = cv::Mat::ones(heatmap.size(), CV_8UC1);
     std::vector<std::pair<pixel_type, cv::Point2i>> peaks; // vector of (score, position).
     for (int i = 0; i < heatmap.rows; i++)
@@ -91,15 +91,17 @@ std::vector<cv::Point2i> nms(
             }
         }
 
-    // Sort peaks based on their scores.
+    // -- Sort peaks based on their scores.
     std::sort(peaks.begin(), peaks.end(),
               [](auto const &p1, auto const &p2) { return p1.first > p2.first; });
 
-    // Return the positions of peaks.
-    std::vector<cv::Point2i> peaks_position;
-    for (auto const &peak : peaks)
-        peaks_position.push_back(peak.second);
-    return peaks_position;
+    // -- Get the positions of peaks.
+    // std::vector<cv::Point2i> peaks_position;
+    // for (auto const &peak : peaks)
+    //     peaks_position.push_back(peak.second);
+
+    // -- Return.
+    return peaks;
 }
 
 } // namespace geometry

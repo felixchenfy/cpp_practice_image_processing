@@ -13,12 +13,12 @@ namespace geometry
 std::vector<Line2d> detectLineByHoughTransform(
     const cv::Mat1b &edge,
     cv::Mat1i *dst_polar,
-    int nms_min_pts,
-    int nms_radius)
+    const int nms_min_pts,
+    const int nms_radius)
 {
     // Reference:
     // https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/hough_lines/hough_lines.html
-    
+
     int r = edge.rows, c = edge.cols;
     const int N_ANGLE_GRID = 180;               // [0, 179] degrees,
     const int N_DIST_GRID = maths::norm2(r, c); // Line's max distance to origin.
@@ -39,10 +39,12 @@ std::vector<Line2d> detectLineByHoughTransform(
                 }
 
     // -- Step 2. Non maximum suppression based on min_pts and radius.
-    std::vector<cv::Point2i> peaks = nms<uint32_t>(polar, nms_min_pts, nms_radius);
+    std::vector<std::pair<uint32_t, cv::Point2i>>
+        peaks = nms<uint32_t>(polar, nms_min_pts, nms_radius);
+
     std::vector<Line2d> lines;
-    for (const cv::Point2i &p : peaks)
-        lines.push_back(Line2d(p.x, p.y)); // p.x is distance; p.y is angle.
+    for (const auto &p : peaks)
+        lines.push_back(Line2d(p.second.x, p.second.y)); // p.x is distance; p.y is angle.
 
     // -- Return.
     if (dst_polar != nullptr) // Return the image of hough transform.
