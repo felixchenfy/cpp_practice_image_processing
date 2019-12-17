@@ -56,7 +56,7 @@ std::vector<Line2d>
 detectLineByHoughTransform(
     const cv::Mat1b &edge,
     cv::Mat1i *dst_polar = nullptr,
-    const int nms_min_pts = 30,
+    const int nms_min_pts = 50,
     const int nms_radius = 10);
 
 /**
@@ -81,11 +81,35 @@ std::vector<std::pair<pixel_type, cv::Point2i>> nms(
         for (int j = 0; j < heatmap.cols; j++)
         {
             const pixel_type score = heatmap.at<pixel_type>(i, j);
+
+            // -- Threshold by min_value.
             if (mask.at<uchar>(i, j) == 0 || score < min_value)
                 continue;
-            const bool is_max = cv_commons::isLocalMax<pixel_type>(heatmap, i, j, radius);
+
+            // -- Compare with neighbors to see if the center is a local max.
+            // Meanwhile, unmask neighbor pixels that are smaller than center.
+            bool is_max = false;
+            pixel_type center_value = heatmap.at<pixel_type>(i, j);
+            for (int m = -radius; m <= radius && !is_max; m++)
+                for (int n = -radius; n <= radius; n++)
+                {
+                    int r = i + m, c = j + n; // (r, c): the neighbor to compare.
+                    if (r < 0 || c < 0 || r >= heatmap.rows || c >= heatmap.cols)
+                        continue;
+                    if (center_value < heatmap.at<pixel_type>(r, c))
+                    {
+                        is_max = true;
+                        break;
+                    }
+                    else if (center_value > heatmap.at<pixel_type>(r, c))
+                        // We don't need to check this small neighbor later.
+                        mask.at<uchar>(r, c) = 0;
+                }
+
+            // -- Process if it's max.
             if (is_max)
             {
+                // Set all neighbors to zero (Even if the score is the same.)
                 cv_commons::setNeighborsToZero<uchar>(&mask, i, j, radius);
                 peaks.push_back({score, {j, i}});
             }

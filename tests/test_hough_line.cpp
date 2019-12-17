@@ -15,14 +15,14 @@ void test_hough_line()
 {
 
     // -- Read image
-    const std::string filename = "data/color_chessboard.jpg";
-    // const std::string filename = "data/simple_shapes2.png";
+    // const std::string filename = "data/color_chessboard.jpg";
+    const std::string filename = "data/simple_shapes2.png";
     cv::Mat3b src_color = cv_commons::readImage(filename);
     cv::Mat1b src_gray;
     cv::cvtColor(src_color, src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Canny(Mine).
-    const double lb = 300.0, ub = lb * 3;
+    const double lb = 300.0, ub = lb * 2;
     const int kernel_size = 3;
     cv::Mat1b edge = filters::canny(src_gray, lb, ub, kernel_size);
 
