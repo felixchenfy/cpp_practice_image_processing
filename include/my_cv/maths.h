@@ -8,10 +8,7 @@ namespace maths
 {
 
 // --------------------------------------- Simple Maths --------------------------------------- //
-inline float norm2(float x1, float x2)
-{
-    return sqrt(pow(x1, 2.0) + pow(x2, 2.0));
-}
+
 inline double norm2(double x1, double x2)
 {
     return sqrt(pow(x1, 2.0) + pow(x2, 2.0));

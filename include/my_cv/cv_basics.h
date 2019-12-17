@@ -23,25 +23,25 @@ inline cv::Mat3b gray2color(const cv::Mat1b &gray)
 }
 
 /**
- * Float image to uchar image.
+ * double image to uchar image.
  * (( abs(gray) * scale) + inc_value).to_uint8()
  */
-inline cv::Mat1b float2uint8(
-    const cv::Mat1f &gray,
+inline cv::Mat1b double2uint8(
+    const cv::Mat1d &gray,
     bool take_abs = false,
-    float scale = 1.0,
-    float inc_value = 0.)
+    double scale = 1.0,
+    double inc_value = 0.)
 {
     assert(gray.channels() == 1);
     cv::Mat1b dst;
-    cv::Mat1f tmp = take_abs ? cv::abs(gray) : gray;
+    cv::Mat1d tmp = take_abs ? cv::abs(gray) : gray;
     tmp = tmp * scale + inc_value; // Change value.
     tmp.convertTo(dst, CV_8UC1);   // To uint8.
     return dst;
 }
 
 /**
- * Display a vector of uchar or float images.
+ * Display a vector of uchar or double images.
  */
 inline void display_images(
     const std::vector<cv::Mat> images,

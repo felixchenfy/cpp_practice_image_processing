@@ -34,7 +34,7 @@ void test_hough_line()
     cv::cvtColor(src_color, src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Canny(Mine).
-    const float lb = 300.0, ub = lb * 3;
+    const double lb = 300.0, ub = lb * 3;
     const int kernel_size = 3;
     cv::Mat1b edge = filters::canny(src_gray, lb, ub, kernel_size);
 

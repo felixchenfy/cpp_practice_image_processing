@@ -26,7 +26,7 @@ GAUSSION_5x5 = [
 ]
 
 print("Gaussion 5x5 kernel:")
-print_as_cpp_2d_vector(np.array(GAUSSION_5x5).astype(np.float32)/256.0)
+print_as_cpp_2d_vector(np.array(GAUSSION_5x5).astype(np.double32)/256.0)
 
 
 ''' ----------------------------- GAUSSION_3x3 ----------------------------- '''
@@ -37,4 +37,4 @@ GAUSSION_3x3 = [
 ]
 
 print("Gaussion 3x3 kernel:")
-print_as_cpp_2d_vector(np.array(GAUSSION_3x3).astype(np.float32)/16.0)
+print_as_cpp_2d_vector(np.array(GAUSSION_3x3).astype(np.double32)/16.0)
