@@ -21,11 +21,11 @@ void test_canny()
 
     // -- Canny(Mine).
     const double lb = 70.0, ub = 210.0;
-    const int kernel_size = 3;
-    cv::Mat1b edge_canny = filters::canny(src_gray, lb, ub, kernel_size);
+    cv::Mat1b edge_canny = filters::canny(src_gray, lb, ub);
 
     // -- Canny(OpenCV).
     cv::Mat1b edge_canny_opencv;
+    const int kernel_size = 5;
     cv::Canny(src_gray, edge_canny_opencv, lb, ub, kernel_size);
 
     // -- For comparison, compute sobel.

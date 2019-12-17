@@ -60,6 +60,40 @@ detectLineByHoughTransform(
     const int nms_radius = 10);
 
 /**
+ * Check if img[row, col] is >= {all its neighbor elements}.
+ * Meanwhile, if a neighbor pixel is < center, 
+ *      set it's mask value to zero.
+ * @param radius Radius of the neighbor square.
+ * @param mask [out] Small pixels' mask will be set as zero.
+ * @return bool.
+ */
+template <typename pixel_type>
+bool checkLocalMaxAndSuppress(
+    const cv::Mat &img,
+    const int row, const int col, const int radius,
+    cv::Mat1b *mask)
+{
+    pixel_type center_value = img.at<pixel_type>(row, col);
+    for (int m = -radius; m <= radius; m++)
+        for (int n = -radius; n <= radius; n++)
+        {
+            if (m == 0 || n == 0)
+                continue;
+            int r = row + m, c = col + n;
+            if (r < 0 || c < 0 || r >= img.rows || c >= img.cols)
+                continue;
+            if (center_value < img.at<pixel_type>(r, c)) // not >=
+            {
+                mask->at<uchar>(row, col) = 0;
+                return false;
+            }
+            else if (center_value > img.at<pixel_type>(r, c))
+                mask->at<uchar>(r, c) = 0;
+        }
+    return true;
+}
+
+/**
  * Non-maximum suppression on heatmap.
  * @param heaptmap An image of with pixel_type.
  * @param radius Radius of NMS.
@@ -67,7 +101,8 @@ detectLineByHoughTransform(
  *  The points are sort from high score to low score.
  */
 template <typename pixel_type>
-std::vector<std::pair<pixel_type, cv::Point2i>> nms(
+std::vector<std::pair<pixel_type, cv::Point2i>>
+nms(
     const cv::Mat &heatmap,
     const int min_value,
     const int radius)
@@ -75,7 +110,7 @@ std::vector<std::pair<pixel_type, cv::Point2i>> nms(
     assert(heatmap.channels() == 1);
 
     // -- Detect local max and store the (score, position).
-    cv::Mat mask = cv::Mat::ones(heatmap.size(), CV_8UC1);
+    cv::Mat1b mask = cv::Mat::ones(heatmap.size(), CV_8UC1);
     std::vector<std::pair<pixel_type, cv::Point2i>> peaks; // vector of (score, position).
     for (int i = 0; i < heatmap.rows; i++)
         for (int j = 0; j < heatmap.cols; j++)
@@ -88,23 +123,8 @@ std::vector<std::pair<pixel_type, cv::Point2i>> nms(
 
             // -- Compare with neighbors to see if the center is a local max.
             // Meanwhile, unmask neighbor pixels that are smaller than center.
-            bool is_max = false;
-            pixel_type center_value = heatmap.at<pixel_type>(i, j);
-            for (int m = -radius; m <= radius && !is_max; m++)
-                for (int n = -radius; n <= radius; n++)
-                {
-                    int r = i + m, c = j + n; // (r, c): the neighbor to compare.
-                    if (r < 0 || c < 0 || r >= heatmap.rows || c >= heatmap.cols)
-                        continue;
-                    if (center_value < heatmap.at<pixel_type>(r, c))
-                    {
-                        is_max = true;
-                        break;
-                    }
-                    else if (center_value > heatmap.at<pixel_type>(r, c))
-                        // We don't need to check this small neighbor later.
-                        mask.at<uchar>(r, c) = 0;
-                }
+            const bool is_max = checkLocalMaxAndSuppress<pixel_type>(
+                heatmap, i, j, radius, &mask);
 
             // -- Process if it's max.
             if (is_max)

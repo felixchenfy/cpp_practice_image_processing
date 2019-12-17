@@ -215,10 +215,8 @@ void _cannyDfs(
  *          if: Ig[i, j] >= ub,
  *          or: Ig[i, j] >= lb and is connected to a pixel >= ub.
  */
-cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub, const int kernel_size)
+cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub)
 {
-    // -- Check input.
-    assert(kernel_size == 3); // Only support 3.
 
     // -- Settings.
 
