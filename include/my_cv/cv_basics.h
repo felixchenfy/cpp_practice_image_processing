@@ -57,7 +57,7 @@ inline cv::Mat float2uint8(
     return dst;
 }
 
-// Convert image to uint8 single channel.
+// Convert image to 8UC3 image.
 inline cv::Mat3b to8UC3(const cv::Mat &image)
 {
     assert(image.channels() == 1 || image.channels() == 3);

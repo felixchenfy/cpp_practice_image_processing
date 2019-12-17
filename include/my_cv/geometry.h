@@ -30,7 +30,7 @@ struct Line2d
     }
     void print() const
     {
-        std::cout << "Line angle = " << angle << " degrees, "
+        std::cout << "Line parameters: angle = " << angle << " degrees, "
                   << "distance = " << distance << " pixels." << std::endl;
     }
 };

@@ -212,7 +212,7 @@ cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub, const in
 
     // Scale the gradient's magnitude to match with OpenCV.
     // This is set by my experiment.
-    constexpr double SCALE_GRADIENT_MAG = 1.75;
+    constexpr double SCALE_GRADIENT_MAG = 1.5;
 
     const int r1 = 1;      // radius of the gaussian filter.
     const int r2 = 1;      // radius of the sobel kernel. I only implemented the ksize=3.
