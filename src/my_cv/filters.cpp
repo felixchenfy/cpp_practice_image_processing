@@ -1,7 +1,7 @@
 
 
 #include "my_cv/filters.h"
-#include "my_cv/cv_basics.h"
+#include "my_cv/cv_commons.h"
 #include <iostream>
 #include <cmath>
 namespace filters
@@ -250,8 +250,8 @@ cv::Mat1b canny(const cv::Mat1b &src, const double lb, const double ub, const in
             Ig.at<double>(i, j) = (fabs(dx) + fabs(dy)) * SCALE_GRADIENT_MAG;
             Id.at<double>(i, j) = atan2(dy, dx);
         }
-    // cv::imwrite("canny_gradient_mag.png", cv_basics::float2uint8(Ig / 4.0));
-    // cv::imwrite("canny_gradient_dir.png", cv_basics::float2uint8(Id / M_PI * 127.0 + 127.0));
+    // cv::imwrite("canny_gradient_mag.png", cv_commons::float2uint8(Ig / 4.0));
+    // cv::imwrite("canny_gradient_dir.png", cv_commons::float2uint8(Id / M_PI * 127.0 + 127.0));
 
     // -- Step 3: Non maximum suppression along the gradient direction.
     cv::Mat1d Ig_tmp = Ig.clone();

@@ -1,7 +1,7 @@
 
 #include "my_cv/geometry.h"
 #include "my_cv/filters.h"
-#include "my_cv/cv_basics.h"
+#include "my_cv/cv_commons.h"
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -17,7 +17,7 @@ void test_hough_line()
     // -- Read image
     const std::string filename = "data/color_chessboard.jpg";
     // const std::string filename = "data/simple_shapes2.png";
-    cv::Mat3b src_color = cv_basics::readImage(filename);
+    cv::Mat3b src_color = cv_commons::readImage(filename);
     cv::Mat1b src_gray;
     cv::cvtColor(src_color, src_gray, cv::COLOR_BGR2GRAY);
 
@@ -39,8 +39,8 @@ void test_hough_line()
         line.drawToImage(&img_disp);
         line.print();
     }
-    cv_basics::display_images({polar}, "Hough Transform Result", -1);
-    cv_basics::display_images({edge, img_disp}, "Edge & Detected lines");
+    cv_commons::display_images({polar}, "Hough Transform Result", -1);
+    cv_commons::display_images({edge, img_disp}, "Edge & Detected lines");
     return;
 }
 

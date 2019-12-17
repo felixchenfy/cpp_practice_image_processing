@@ -1,7 +1,7 @@
 #ifndef MY_CV_KEYPOINT_H
 #define MY_CV_KEYPOINT_H
 
-#include "my_cv/cv_basics.h"
+#include "my_cv/cv_commons.h"
 #include "my_cv/filters.h"
 #include "my_cv/geometry.h"
 #include <vector>
@@ -52,11 +52,11 @@ std::vector<std::pair<double, cv::Point2i>> detectHarris(
     const cv::Mat &gray,
     cv::Mat *dst_img_edge_score = nullptr,
     cv::Mat *dst_img_disp = nullptr,
-    const int nms_radius = 10,
-    const double min_score = 10.0,
     const int max_points = 100,
-    const int window_size = 5,
-    const bool is_detect_edge = false)
+    const int nms_radius = 10,
+    const double min_score = 100.0,
+    const double scale_score = 0.00000001,
+    const int window_size = 5)
 {
     assert(window_size % 2 == 1);
 
@@ -73,22 +73,15 @@ std::vector<std::pair<double, cv::Point2i>> detectHarris(
     cv::Mat1d mat_determinant = Ix2_window_mean.mul(Iy2_window_mean) - Ixy2_window_mean;
     cv::Mat1d res_score_img = cv::Mat::zeros(gray.size(), CV_64FC1);
 
-    if (!is_detect_edge) // Detect corners by default.
-    {
-        for (int i = 0; i < gray.rows; i++)
-            for (int j = 0; j < gray.cols; j++)
-                res_score_img.at<double>(i, j) = _Harris_score_func_for_corner(
-                    mat_trace.at<double>(i, j),
-                    mat_determinant.at<double>(i, j));
-    }
-    else // Detect edge. This is just an experiment.
-    {
-        for (int i = 0; i < gray.rows; i++)
-            for (int j = 0; j < gray.cols; j++)
-                res_score_img.at<double>(i, j) = _Harris_score_func_for_edge(
-                    mat_trace.at<double>(i, j),
-                    mat_determinant.at<double>(i, j));
-    }
+    // -- Detect corners.
+    //   (If have you want to detect edge instead of corner,
+    //   you may try: _Harris_score_func_for_edge.)
+    for (int i = 0; i < gray.rows; i++)
+        for (int j = 0; j < gray.cols; j++)
+            res_score_img.at<double>(i, j) =
+                scale_score * _Harris_score_func_for_corner(
+                                  mat_trace.at<double>(i, j),
+                                  mat_determinant.at<double>(i, j));
 
     // -- Non-maximum suppressioin to find pixels with local max score.
     std::vector<std::pair<double, cv::Point2i>>

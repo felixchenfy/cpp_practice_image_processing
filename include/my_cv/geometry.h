@@ -8,7 +8,7 @@
  *      nms: non-maximum suppression.
  */
 
-#include "my_cv/cv_basics.h"
+#include "my_cv/cv_commons.h"
 #include <vector>
 #include <iostream>
 #include <opencv2/core.hpp>
@@ -60,8 +60,8 @@ detectLineByHoughTransform(
     const int nms_radius = 10);
 
 /**
- * Non-maximum suppression (NMS).
- * @param heaptmap The input image. We want to find its local peaks.
+ * Non-maximum suppression on heatmap.
+ * @param heaptmap An image of with pixel_type.
  * @param radius Radius of NMS.
  * @return (x, y) position of each peak point in heatmap.
  *  The points are sort from high score to low score.
@@ -83,10 +83,10 @@ std::vector<std::pair<pixel_type, cv::Point2i>> nms(
             const pixel_type score = heatmap.at<pixel_type>(i, j);
             if (mask.at<uchar>(i, j) == 0 || score < min_value)
                 continue;
-            const bool is_max = cv_basics::isLocalMax<pixel_type>(heatmap, i, j, radius);
+            const bool is_max = cv_commons::isLocalMax<pixel_type>(heatmap, i, j, radius);
             if (is_max)
             {
-                cv_basics::setNeighborsToZero<uchar>(&mask, i, j, radius);
+                cv_commons::setNeighborsToZero<uchar>(&mask, i, j, radius);
                 peaks.push_back({score, {j, i}});
             }
         }

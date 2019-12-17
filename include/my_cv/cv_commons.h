@@ -1,5 +1,5 @@
-#ifndef MY_CV_BASICS_H
-#define MY_CV_BASICS_H
+#ifndef MY_CV_COMMONS_H
+#define MY_CV_COMMONS_H
 
 /**
  * Functions:
@@ -21,7 +21,7 @@
 #include <vector>
 #include <iostream>
 
-namespace cv_basics
+namespace cv_commons
 {
 
 /**
@@ -168,5 +168,5 @@ void setBlockToZero(cv::Mat *img, int row, int col, int radius)
         }
 }
 
-} // namespace cv_basics
+} // namespace cv_commons
 #endif

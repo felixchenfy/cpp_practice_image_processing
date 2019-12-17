@@ -1,6 +1,6 @@
 
 #include "my_cv/filters.h"
-#include "my_cv/cv_basics.h"
+#include "my_cv/cv_commons.h"
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -17,7 +17,7 @@ void test_canny()
     const std::string filename = "data/color_chessboard.jpg";
     // const std::string filename = "data/simple_shapes2.png";
     cv::Mat src_gray;
-    cv::cvtColor(cv_basics::readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(cv_commons::readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Canny(Mine).
     const double lb = 70.0, ub = 210.0;
@@ -30,11 +30,11 @@ void test_canny()
 
     // -- For comparison, compute sobel.
     constexpr bool TAKE_ABS = true;
-    cv::Mat1b edge_sobel = cv_basics::float2uint8(filters::sobel(src_gray), TAKE_ABS);
+    cv::Mat1b edge_sobel = cv_commons::float2uint8(filters::sobel(src_gray), TAKE_ABS);
 
     // -- Show image.
     const std::string WINDOW_NAME = "Original / Sobel / Canny(Mine) / Canny(OpenCV)";
-    cv_basics::display_images(
+    cv_commons::display_images(
         {src_gray, edge_sobel, edge_canny, edge_canny_opencv},
         WINDOW_NAME);
 }

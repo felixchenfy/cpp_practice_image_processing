@@ -1,6 +1,6 @@
 
 #include "my_cv/filters.h"
-#include "my_cv/cv_basics.h"
+#include "my_cv/cv_commons.h"
 
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgproc.hpp"
@@ -37,7 +37,7 @@ void test_sobel_and_gaussion()
     const std::string filename = "data/color_chessboard.jpg";
     // const std::string filename = "data/simple_shapes2.png";
     cv::Mat src_gray;
-    cv::cvtColor(cv_basics::readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(cv_commons::readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Filter
     cv::Mat1f edge_x = filters::sobelX(src_gray);
@@ -48,14 +48,14 @@ void test_sobel_and_gaussion()
     // -- Convert image from double to uint8 for display.
     constexpr bool TAKE_ABS = true;
     constexpr double SCALE_GRAD = 0.3;
-    cv::Mat1b disp_edge_x = cv_basics::float2uint8(edge_x, TAKE_ABS, SCALE_GRAD);
-    cv::Mat1b disp_edge_y = cv_basics::float2uint8(edge_y, TAKE_ABS, SCALE_GRAD);
-    cv::Mat1b disp_edge = cv_basics::float2uint8(edge, TAKE_ABS, SCALE_GRAD);
+    cv::Mat1b disp_edge_x = cv_commons::float2uint8(edge_x, TAKE_ABS, SCALE_GRAD);
+    cv::Mat1b disp_edge_y = cv_commons::float2uint8(edge_y, TAKE_ABS, SCALE_GRAD);
+    cv::Mat1b disp_edge = cv_commons::float2uint8(edge, TAKE_ABS, SCALE_GRAD);
 
     // -- Show image.
     const std::string WINDOW_NAME =
         "Original     /     Gaussion     /     SobelX     /     SobelY     /     Sobel";
-    cv_basics::display_images(
+    cv_commons::display_images(
         {src_gray, gaussion, disp_edge_x, disp_edge_y, disp_edge},
         WINDOW_NAME);
 }
