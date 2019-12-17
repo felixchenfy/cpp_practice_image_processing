@@ -37,8 +37,8 @@ cv::Mat readImage(const std::string &filename = "")
 void test_kernels_values()
 {
     //  Test whether Gaussian kernels sum to one.
-    assert_kernel_sums_to_one(filters::kernels::GAUSSION_3x3);
-    assert_kernel_sums_to_one(filters::kernels::GAUSSION_5x5);
+    assert_kernel_sums_to_one(filters::gaussion(3));
+    assert_kernel_sums_to_one(filters::gaussion(7));
 }
 
 void test_conv2d()
@@ -54,8 +54,8 @@ void test_conv2d()
 
     // -- Filter
     cv::Mat blurred;
-    blurred = filters::conv2D(src_gray, filters::kernels::GAUSSION_5x5);
-    blurred = filters::conv2D(blurred, filters::kernels::GAUSSION_5x5);
+    blurred = filters::conv2D(src_gray, filters::gaussion(5));
+    blurred = filters::conv2D(blurred, filters::gaussion(5));
 
     // -- Show image
     const std::string WINDOW_NAME = "Color/Gray/Blurred";
@@ -92,6 +92,6 @@ void test_sobel()
 
 int main(int argc, char const *argv[])
 {
-    // test_conv2d();
-    test_sobel();
+    test_conv2d();
+    // test_sobel();
 }
