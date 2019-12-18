@@ -10,7 +10,7 @@
 namespace geometry
 {
 
-std::vector<Line2d> detectLineByHoughTransform(
+std::vector<Line2dPolor> detectLineByHoughTransform(
     const cv::Mat1b &edge,
     cv::Mat1i *dst_polar,
     const int nms_min_pts,
@@ -42,9 +42,9 @@ std::vector<Line2d> detectLineByHoughTransform(
     std::vector<std::pair<uint32_t, cv::Point2i>>
         peaks = nms<uint32_t>(polar, nms_min_pts, nms_radius);
 
-    std::vector<Line2d> lines;
+    std::vector<Line2dPolor> lines;
     for (const auto &p : peaks)
-        lines.push_back(Line2d(p.second.x, p.second.y)); // p.x is distance; p.y is angle.
+        lines.push_back(Line2dPolor(p.second.x, p.second.y)); // p.x is distance; p.y is angle.
 
     // -- Return.
     if (dst_polar != nullptr) // Return the image of hough transform.

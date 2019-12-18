@@ -28,12 +28,12 @@ void test_hough_line()
     // -- Hough line detection.
     cv::Mat1i polar;
     const int NMS_MIN_PTS = 50, NMS_RADIUS = 15;
-    std::vector<geometry::Line2d> lines = geometry::detectLineByHoughTransform(edge, &polar, NMS_MIN_PTS, NMS_RADIUS);
+    std::vector<geometry::Line2dPolor> lines = geometry::detectLineByHoughTransform(edge, &polar, NMS_MIN_PTS, NMS_RADIUS);
     std::cout << "Detect " << lines.size() << " lines." << std::endl;
 
     // -- Draw hough line, and then display.
     cv::Mat img_disp = src_color.clone();
-    for (const geometry::Line2d line : lines)
+    for (const geometry::Line2dPolor line : lines)
     {
         line.drawToImage(&img_disp);
         line.print();

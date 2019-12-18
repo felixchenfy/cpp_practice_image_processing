@@ -3,7 +3,7 @@
 
 /**
  * Classes and functions:
- *      struct Line2d: Line represented in polar coordinate.
+ *      struct Line2dPolor: Line represented in polar coordinate.
  *      detectLineByHoughTransform: Hough line detection.
  *      nms: non-maximum suppression.
  */
@@ -20,11 +20,11 @@ namespace geometry
 /**
  * 2D line. Represented in polar coordinate.
  */
-struct Line2d
+struct Line2dPolor
 {
     double distance; // Distance to the origin.
     double angle;    // Angle of the line's perpendicular line which passes the origin.
-    Line2d(double distance = 0.0, double angle = 0.0) : distance(distance), angle(angle) {}
+    Line2dPolor(double distance = 0.0, double angle = 0.0) : distance(distance), angle(angle) {}
     void drawToImage(cv::Mat *img, const cv::Scalar color = {0, 0, 255}, const int thickness = 2) const
     {
         assert(img->channels() == 3);
@@ -52,7 +52,7 @@ struct Line2d
  * @param nms_radius Radius of non-maximum suppression.
  * @return Parameters of each detected line.
  */
-std::vector<Line2d>
+std::vector<Line2dPolor>
 detectLineByHoughTransform(
     const cv::Mat1b &edge,
     cv::Mat1i *dst_polar = nullptr,
