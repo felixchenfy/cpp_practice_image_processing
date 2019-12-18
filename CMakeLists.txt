@@ -18,11 +18,14 @@ find_package( OpenCV REQUIRED )
 set( THIRD_PARTY_LIBS 
     ${OpenCV_LIBS}
 )
+include_directories(
+        ${OpenCV_INCLUDE_DIRS}
+        "/usr/include/eigen3/" # I use eigen in RASNAC algorithm.
+)
 
 # -- My library
 add_subdirectory( src/my_cv )
 
-# -- Combine libraries
 set( ALL_LIBS 
     ${OpenCV_LIBS}
     filters
@@ -30,12 +33,25 @@ set( ALL_LIBS
     keypoints
 )
 
-# -- Unit tests
-add_subdirectory( tests )
+# -- Main tests.
 
-# -- Executables
-# add_executable( main src/canny.cpp )
-# target_link_libraries( main ${OpenCV_LIBS} )
+add_executable( test_sobel_and_gaussion tests/test_sobel_and_gaussion.cpp )
+target_link_libraries( test_sobel_and_gaussion ${ALL_LIBS})
+
+add_executable( test_canny tests/test_canny.cpp )
+target_link_libraries( test_canny ${ALL_LIBS})
+
+add_executable( test_hough_line tests/test_hough_line.cpp )
+target_link_libraries( test_hough_line ${ALL_LIBS})
+
+add_executable( test_harris tests/test_harris.cpp )
+target_link_libraries( test_harris ${ALL_LIBS})
+
+# -- Some simple tests.
+
+add_executable( test_svd tests/others/test_svd.cpp )
+target_link_libraries( test_svd ${ALL_LIBS})
+
 
 
 
