@@ -22,7 +22,7 @@ set( THIRD_PARTY_LIBS
 # -- My library
 add_subdirectory( src/my_cv )
 
-# -- Merge libraries
+# -- Combine libraries
 set( ALL_LIBS 
     ${OpenCV_LIBS}
     filters
@@ -30,7 +30,7 @@ set( ALL_LIBS
     keypoints
 )
 
-# -- Tests
+# -- Unit tests
 add_subdirectory( tests )
 
 # -- Executables
