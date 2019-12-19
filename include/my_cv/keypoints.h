@@ -11,7 +11,7 @@ namespace keypoints
 std::vector<std::pair<double, cv::Point2i>>
 detectHarrisCorners(
     const cv::Mat &gray,
-    cv::Mat1b *dst_img_edge_score = nullptr,
+    cv::Mat1b *dst_img_corner_score = nullptr,
     cv::Mat3b *dst_img_disp = nullptr,
     const int max_points = 300, // Resize dst points vector to be shorter than this.
     const int nms_radius = 10,

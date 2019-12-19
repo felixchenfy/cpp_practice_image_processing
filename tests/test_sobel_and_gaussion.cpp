@@ -55,9 +55,10 @@ void test_sobel_and_gaussion()
     // -- Show image.
     const std::string WINDOW_NAME =
         "Original     /     Gaussion     /     SobelX     /     SobelY     /     Sobel";
-    cv_commons::display_images(
+    cv::Mat img_disp = cv_commons::display_images(
         {src_gray, gaussion, disp_edge_x, disp_edge_y, disp_edge},
         WINDOW_NAME);
+    cv::imwrite("output/test_sobel_and_gaussion.png", img_disp);
 }
 
 int main(int argc, char const *argv[])

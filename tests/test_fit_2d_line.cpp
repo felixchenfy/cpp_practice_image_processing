@@ -69,10 +69,11 @@ int main(int argc, char const *argv[])
     cv::Mat img_disp1 = test_fit_2_points();
     cv::Mat img_disp2 = test_fit_5_points();
 
-    cv_commons::display_images(
+    cv::Mat img_disp = cv_commons::display_images(
         {img_disp1, img_disp2},
         "Test1: Fit 2 points."
         "                                                       "
         "Test2: Fit 5 points.");
+    cv::imwrite("output/test_fit_2d_line.png", img_disp);
     return 0;
 }

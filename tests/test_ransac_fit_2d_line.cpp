@@ -85,11 +85,12 @@ void test_ransac_fit_2d_line()
     int n_inital_samples2 = 4;
     cv::Mat img_disp2 = fit_points(points, n_inital_samples2);
 
-    cv_commons::display_images(
+    cv::Mat img_disp = cv_commons::display_images(
         {img_disp1, img_disp2},
-        "n_inital_samples1=2"
+        "n_inital_samples=2"
         "                                                          "
-        "n_inital_samples1=4");
+        "n_inital_samples=4");
+    cv::imwrite("output/test_ransac_fit_2d_line.png", img_disp);
     return;
 }
 

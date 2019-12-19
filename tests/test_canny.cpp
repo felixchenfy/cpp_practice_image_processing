@@ -20,7 +20,7 @@ void test_canny()
     cv::cvtColor(cv_commons::readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Canny(Mine).
-    const double lb = 70.0, ub = 210.0;
+    const double lb = 800.0, ub = lb * 3.0;
     cv::Mat1b edge_canny = filters::canny(src_gray, lb, ub);
 
     // -- Canny(OpenCV).
@@ -34,9 +34,10 @@ void test_canny()
 
     // -- Show image.
     const std::string WINDOW_NAME = "Original / Sobel / Canny(Mine) / Canny(OpenCV)";
-    cv_commons::display_images(
+    cv::Mat img_disp = cv_commons::display_images(
         {src_gray, edge_sobel, edge_canny, edge_canny_opencv},
         WINDOW_NAME);
+    cv::imwrite("output/test_canny.png", img_disp);
 }
 
 int main(int argc, char const *argv[])

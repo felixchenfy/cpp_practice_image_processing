@@ -20,8 +20,8 @@ void test_harris()
     cv::cvtColor(cv_commons::readImage(filename), src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Harris corner detection.
-    cv::Mat1b img_edge_score;
-    cv::Mat3b img_disp;
+    cv::Mat1b img_corner_score;
+    cv::Mat3b img_with_corners;
     const int max_points = 300;
     const int nms_radius = 10;
     const unsigned char min_score = 100;
@@ -29,14 +29,15 @@ void test_harris()
     std::vector<std::pair<double, cv::Point2i>>
         corners_score_and_position =
             keypoints::detectHarrisCorners(
-                src_gray, &img_edge_score, &img_disp,
+                src_gray, &img_corner_score, &img_with_corners,
                 max_points, nms_radius, min_score);
 
     // -- Show image.
     const std::string WINDOW_NAME = "Original / Harris score / Corners(red)";
-    cv_commons::display_images(
-        {src_gray, img_edge_score, img_disp},
+    cv::Mat img_disp = cv_commons::display_images(
+        {src_gray, img_corner_score, img_with_corners},
         WINDOW_NAME);
+    cv::imwrite("output/test_harris.png", img_disp);
 }
 
 int main(int argc, char const *argv[])

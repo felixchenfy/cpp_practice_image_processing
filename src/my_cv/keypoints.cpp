@@ -52,8 +52,8 @@ inline double _Harris_score_func_for_edge(
 
 std::vector<std::pair<double, cv::Point2i>> detectHarrisCorners(
     const cv::Mat &gray,
-    cv::Mat1b *dst_img_edge_score,
-    cv::Mat3b *dst_img_disp,
+    cv::Mat1b *dst_img_corner_score,
+    cv::Mat3b *dst_img_with_corners,
     const int max_points,
     const int nms_radius,
     const unsigned char min_score,
@@ -99,20 +99,20 @@ std::vector<std::pair<double, cv::Point2i>> detectHarrisCorners(
     //     peaks_position.push_back(peak.second);
 
     // -- Return.
-    if (dst_img_edge_score != nullptr)
+    if (dst_img_corner_score != nullptr)
     {
-        *dst_img_edge_score = cv_commons::float2uint8(res_score_img);
+        *dst_img_corner_score = cv_commons::float2uint8(res_score_img);
     }
-    if (dst_img_disp != nullptr)
+    if (dst_img_with_corners != nullptr)
     {
         // Draw it!
         constexpr int RADIUS = 2;
         constexpr int LINE_TYPE = 8;
         const cv::Scalar COLOR_RED{0, 0, 255};
-        *dst_img_disp = cv_commons::gray2color(gray);
+        *dst_img_with_corners = cv_commons::gray2color(gray);
         for (const auto p : corners_score_and_pos)
         {
-            cv::circle(*dst_img_disp, p.second,
+            cv::circle(*dst_img_with_corners, p.second,
                    RADIUS, COLOR_RED, CV_FILLED, LINE_TYPE);
         }
     }

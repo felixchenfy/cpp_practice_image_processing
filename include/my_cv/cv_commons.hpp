@@ -85,7 +85,7 @@ inline cv::Mat float2uint8(
  * Display a vector of images.
  * The image can be uint8/float/double, 1 or 3 channels.
  */
-inline void display_images(
+inline cv::Mat display_images(
     const std::vector<cv::Mat> images,
     const std::string WINDOW_NAME = "Images",
     const int wait_key_ms = 0)
@@ -104,7 +104,7 @@ inline void display_images(
     cv::imshow(WINDOW_NAME, img_disp);
     if (wait_key_ms >= 0)
         cv::waitKey(wait_key_ms);
-    return;
+    return img_disp;
 }
 
 /**

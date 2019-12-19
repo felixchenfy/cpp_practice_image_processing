@@ -22,7 +22,7 @@ void test_hough_line()
     cv::cvtColor(src_color, src_gray, cv::COLOR_BGR2GRAY);
 
     // -- Canny(Mine).
-    const double lb = 300.0, ub = lb * 2;
+    const double lb = 3000.0, ub = lb * 3;
     cv::Mat1b edge = filters::canny(src_gray, lb, ub);
 
     // -- Hough line detection.
@@ -38,8 +38,12 @@ void test_hough_line()
         line.drawToImage(&img_disp);
         line.print();
     }
-    cv_commons::display_images({polar}, "Hough Transform Result", -1);
-    cv_commons::display_images({edge, img_disp}, "Edge & Detected lines");
+
+    cv::Mat img_disp1 = cv_commons::display_images({polar}, "Hough Transform Result", -1);
+    cv::imwrite("output/test_hough_line_polar_coord.png", img_disp1);
+
+    cv::Mat img_disp2 = cv_commons::display_images({edge, img_disp}, "Edge & Detected lines");
+    cv::imwrite("output/test_hough_line_edge_and_lines.png", img_disp2);
     return;
 }
 
