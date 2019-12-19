@@ -1,7 +1,7 @@
 #ifndef MY_RANSAC_RANSAC_H
 #define MY_RANSAC_RANSAC_H
 
-#include "my_ransac/abstract_model.h"
+#include "my_ransac/abstract_model.hpp"
 
 #include <iostream>
 #include <vector>

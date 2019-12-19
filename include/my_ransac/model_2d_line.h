@@ -1,7 +1,7 @@
 #ifndef MY_RANSAC_MODEL_2D_LINE_H
 #define MY_RANSAC_MODEL_2D_LINE_H
 
-#include "my_ransac/abstract_model.h"
+#include "my_ransac/abstract_model.hpp"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
