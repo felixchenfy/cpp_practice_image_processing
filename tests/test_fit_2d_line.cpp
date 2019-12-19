@@ -29,9 +29,8 @@ void draw_points(
                    RADIUS, COLOR_BLUE, CV_FILLED, LINE_TYPE);
 }
 
-cv::Mat test_fit_2_points()
+cv::Mat fit_points(const std::vector<cv::Point2d> &points)
 {
-    std::vector<cv::Point2d> points = {{100, 100}, {100, 200}};
 
     models::ModelLine2D model;
     model.train(points);
@@ -45,10 +44,34 @@ cv::Mat test_fit_2_points()
     return img_disp;
 }
 
+cv::Mat test_fit_2_points()
+{
+    const std::vector<cv::Point2d> points = {
+        {100, 100},
+        {100, 200}};
+    return fit_points(points);
+}
+
+cv::Mat test_fit_5_points()
+{
+    const std::vector<cv::Point2d> points = {
+        {100 + 10, 100 + 30},
+        {150 - 20, 150 - 10},
+        {200 + 30, 200 - 01},
+        {250 - 10, 250 + 04},
+        {300 + 05, 300 - 24}};
+    return fit_points(points);
+}
+
 int main(int argc, char const *argv[])
 {
     cv::Mat img_disp1 = test_fit_2_points();
+    cv::Mat img_disp2 = test_fit_5_points();
 
-    cv_commons::display_images({img_disp1});
+    cv_commons::display_images(
+        {img_disp1, img_disp2},
+        "Test1: Fit 2 points."
+        "                                                       "
+        "Test2: Fit 5 points.");
     return 0;
 }
