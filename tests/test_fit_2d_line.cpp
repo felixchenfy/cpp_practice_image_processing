@@ -33,7 +33,7 @@ cv::Mat fit_points(const std::vector<cv::Point2d> &points)
 {
 
     models::ModelLine2D model;
-    model.train(points);
+    model.fit(points);
     model.printParam();
     std::vector<double> abc = model.getParam();
 
@@ -49,6 +49,7 @@ cv::Mat test_fit_2_points()
     const std::vector<cv::Point2d> points = {
         {100, 100},
         {100, 200}};
+    // {200, 100}};
     return fit_points(points);
 }
 

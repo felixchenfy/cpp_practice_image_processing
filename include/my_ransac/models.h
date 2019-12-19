@@ -24,7 +24,7 @@ public:
     virtual ~AbstractModel() {}
 
 public:
-    virtual void train(const Data &data) = 0;
+    virtual void fit(const Data &data) = 0;
     virtual Param getParam() const = 0;
     virtual void printParam() const = 0;
     virtual double calcError(const Datum &datum) const = 0;
@@ -51,8 +51,9 @@ protected:
     double a_, b_, c_; // Line eq: ax+by+c=0.
 
 private:
-    Datum p1_, p2_; // Two points on the line for drawing a line.
-    double sqrt_a2b2_;
+    Datum p1_, p2_;    // Two points on the line for drawing a line.
+    cv::Point2d dxdy_; // Line direction.
+    double sqrt_a2b2_; // sqrt(a**2 + b**2)
 
 public:
     ModelLine2D() {}
@@ -66,7 +67,7 @@ public:
                   << "c = " << c_ << std::endl;
     }
 
-    void train(const Data &points)
+    void fit(const Data &points)
     {
         // -- Check input.
         int P = points.size();
@@ -74,10 +75,36 @@ public:
             throw std::runtime_error("Need at least 2 points to fit a line.");
         if (P > 10000)
             throw std::runtime_error("Too many points! Please use only part of them.");
+        if (P == 2)
+            this->fitTwoPoints(points); // Directly obtain params from line equation. Fast.
+        else
+            this->fitMultiplePoints(points); // SVD and find 1st principle axis of PCA.
+        this->is_fitted_ = true;
+        sqrt_a2b2_ = pow(a_ * 2 + b_ * 2, 0.5);
+    }
 
+    void fitTwoPoints(const Data &points)
+    {
+        // Line eq: ax + by + c = 0.
+        const Datum &P = points[0], &Q = points[1];
+        const double a = Q.y - P.y;
+        const double b = P.x - Q.x;
+        const double c = -a * (P.x) - b * (P.y);
+
+        // -- Save results.
+        a_ = a, b_ = b, c_ = c;
+        dxdy_ = cv::Point2d(b, -a);
+        p1_ = P, p2_ = Q;
+    }
+
+    void fitMultiplePoints(const Data &points)
+    {
         // -- Fit line by finding the 1st principle axis of PCA,
         //      which is the line direction.
-        Eigen::MatrixXd data = this->vector2matrix(points);
+        // Line eq: ax + by + c = 0.
+
+        const Eigen::MatrixXd data = this->vector2matrix(points);
+
         Eigen::Matrix<double, 1, 2> line_center = data.colwise().mean();
         Eigen::JacobiSVD<Eigen::MatrixXd> svd( // U,S,V
             data.rowwise() - line_center,
@@ -98,18 +125,10 @@ public:
         //      then c = -x0 * a - y0 * b
         double c = -x0 * a - y0 * b;
 
-        // -- Save result.
-        // Line parameters.
+        // -- Save results.
         a_ = a, b_ = b, c_ = c;
-        this->is_fitted_ = true;
-        sqrt_a2b2_ = pow(a * 2 + b * 2, 0.5);
-
-        // Save two points' positions for later drawing image.
-        constexpr double L = 1000.0; // Line half length.
-        this->p1_ = Datum(x0 - L * line_direction(0),
-                          y0 - L * line_direction(1));
-        this->p2_ = Datum(x0 + L * line_direction(0),
-                          y0 + L * line_direction(1));
+        dxdy_ = cv::Point2d(line_direction(0), line_direction(1));
+        p1_ = {x0, y0}, p2_ = {x0, y0};
     }
 
     double calcError(const Datum &point) const
@@ -124,10 +143,14 @@ public:
               const cv::Scalar color = {255, 0, 0},
               const int thickness = 3)
     {
-        cv::line(*img_disp,
-                 {int(p1_.x), int(p1_.y)},
-                 {int(p2_.x), int(p2_.y)},
-                 color, thickness);
+
+        // Make the point far away for drawing.
+        constexpr double L = 1000.0;
+        cv::Point2i p1 = {int(p1_.x - L * dxdy_.x),
+                          int(p1_.y - L * dxdy_.y)};
+        cv::Point2i p2 = {int(p2_.x + L * dxdy_.x),
+                          int(p2_.y + L * dxdy_.y)};
+        cv::line(*img_disp, p1, p2, color, thickness);
     }
 
 private:
@@ -142,7 +165,7 @@ private:
         }
         return matrix;
     }
-};
+}; // namespace models
 
 } // namespace models
 
