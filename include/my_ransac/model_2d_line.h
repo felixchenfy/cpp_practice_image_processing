@@ -1,5 +1,7 @@
-#ifndef MY_RANSAC_MODEL_H
-#define MY_RANSAC_MODEL_H
+#ifndef MY_RANSAC_MODEL_2D_LINE_H
+#define MY_RANSAC_MODEL_2D_LINE_H
+
+#include "my_ransac/abstract_model.h"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
@@ -14,41 +16,14 @@
 namespace models
 {
 
-template <typename Datum, typename Param>
-class AbstractModel
-{
-    typedef std::vector<Datum> Data;
-
-public:
-    AbstractModel() {}
-    virtual ~AbstractModel() {}
-
-public:
-    virtual void fit(const Data &data) = 0;
-    virtual Param getParam() const = 0;
-    virtual void printParam() const = 0;
-    virtual double calcError(const Datum &datum) const = 0;
-    std::vector<double> calcErrors(const Data &data) const
-    {
-        std::vector<double> errors;
-        errors.reserve(data.size());
-        for (const Datum &data : data)
-            errors.push_back(this->calcError(data));
-        return errors;
-    }
-
-protected:
-    bool is_fitted_ = false;
-};
-
-class ModelLine2D : public AbstractModel<cv::Point2d, std::vector<double>>
+class Model2dLine : public AbstractModel<cv::Point2d, std::vector<double>>
 {
     typedef cv::Point2d Datum;         // (x, y)
     typedef std::vector<double> Param; // (a, b, c). Line eq: ax+by+c=0.
     typedef std::vector<Datum> Data;
 
 public:
-    ModelLine2D() {}
+    Model2dLine() {}
     void fit(const Data &points);
     Param getParam() const { return Param{a_, b_, c_}; }
     void printParam() const;

@@ -1,5 +1,5 @@
 
-#include "my_ransac/models.h"
+#include "my_ransac/model_2d_line.h"
 #include "my_cv/cv_commons.hpp"
 
 #include "opencv2/highgui.hpp"
@@ -32,7 +32,7 @@ void draw_points(
 cv::Mat fit_points(const std::vector<cv::Point2d> &points)
 {
 
-    models::ModelLine2D model;
+    models::Model2dLine model;
     model.fit(points);
     model.printParam();
     std::vector<double> abc = model.getParam();

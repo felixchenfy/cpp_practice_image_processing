@@ -1,9 +1,9 @@
-#include "my_ransac/models.h"
+#include "my_ransac/model_2d_line.h"
 
 namespace models
 {
 
-void ModelLine2D::printParam() const
+void Model2dLine::printParam() const
 {
     std::cout << "2D Line parameters: "
               << "a = " << a_ << ", "
@@ -11,7 +11,7 @@ void ModelLine2D::printParam() const
               << "c = " << c_ << std::endl;
 }
 
-void ModelLine2D::fit(const Data &points)
+void Model2dLine::fit(const Data &points)
 {
     // -- Check input.
     int P = points.size();
@@ -27,7 +27,7 @@ void ModelLine2D::fit(const Data &points)
     sqrt_a2b2_ = pow(a_ * 2 + b_ * 2, 0.5);
 }
 
-void ModelLine2D::fitTwoPoints(const Data &points)
+void Model2dLine::fitTwoPoints(const Data &points)
 {
     // Line eq: ax + by + c = 0.
     const Datum &P = points[0], &Q = points[1];
@@ -41,7 +41,7 @@ void ModelLine2D::fitTwoPoints(const Data &points)
     p1_ = P, p2_ = Q;
 }
 
-void ModelLine2D::fitMultiplePoints(const Data &points)
+void Model2dLine::fitMultiplePoints(const Data &points)
 {
     // -- Fit line by finding the 1st principle axis of PCA,
     //      which is the line direction.
@@ -75,7 +75,7 @@ void ModelLine2D::fitMultiplePoints(const Data &points)
     p1_ = {x0, y0}, p2_ = {x0, y0};
 }
 
-double ModelLine2D::calcError(const Datum &point) const
+double Model2dLine::calcError(const Datum &point) const
 {
     if (!is_fitted_)
         throw std::runtime_error("Model hasn't been fitted.");
@@ -83,7 +83,7 @@ double ModelLine2D::calcError(const Datum &point) const
     return abs(a_ + point.x + b_ * point.y + c_) / sqrt_a2b2_;
 }
 
-void ModelLine2D::draw(cv::Mat *img_disp,
+void Model2dLine::draw(cv::Mat *img_disp,
                        const cv::Scalar color,
                        const int thickness)
 {
@@ -97,7 +97,7 @@ void ModelLine2D::draw(cv::Mat *img_disp,
     cv::line(*img_disp, p1, p2, color, thickness);
 }
 
-Eigen::MatrixXd ModelLine2D::vector2matrix(const Data &points) const
+Eigen::MatrixXd Model2dLine::vector2matrix(const Data &points) const
 {
     int P = points.size();
     Eigen::MatrixXd matrix = Eigen::MatrixXd::Zero(P, 2);
