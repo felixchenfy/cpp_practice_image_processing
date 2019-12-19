@@ -112,7 +112,7 @@ std::vector<std::pair<double, cv::Point2i>> detectHarrisCorners(
         *dst_img_disp = cv_commons::gray2color(gray);
         for (const auto p : corners_score_and_pos)
         {
-            circle(*dst_img_disp, p.second,
+            cv::circle(*dst_img_disp, p.second,
                    RADIUS, COLOR_RED, CV_FILLED, LINE_TYPE);
         }
     }

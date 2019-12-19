@@ -56,8 +56,8 @@ include_directories(
     "/usr/include/eigen3/" # I use eigen in RASNAC algorithm. You may change this to your directory.
 )
 
-add_executable( test_ransac tests/test_ransac.cpp )
-target_link_libraries( test_ransac ${ALL_LIBS})
+add_executable( test_fit_2d_line tests/test_fit_2d_line.cpp )
+target_link_libraries( test_fit_2d_line ${ALL_LIBS})
 
 add_executable( test_svd tests/others/test_svd.cpp )
 target_link_libraries( test_svd ${ALL_LIBS})
