@@ -11,9 +11,6 @@
 #include <vector>
 #include <stdexcept>
 
-namespace models
-{
-
 template <typename Datum, typename Param>
 class AbstractModel
 {
@@ -40,7 +37,5 @@ public:
 protected:
     bool is_fitted_ = false;
 };
-
-} // namespace models
 
 #endif

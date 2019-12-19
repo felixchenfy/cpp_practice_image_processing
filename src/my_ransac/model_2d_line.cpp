@@ -23,22 +23,27 @@ void Model2dLine::fit(const Data &points)
         this->fitTwoPoints(points); // Directly obtain params from line equation. Fast.
     else
         this->fitMultiplePoints(points); // SVD and find 1st principle axis of PCA.
-    this->is_fitted_ = true;
-    sqrt_a2b2_ = pow(a_ * 2 + b_ * 2, 0.5);
+    sqrt_a2b2_ = pow(a_ * a_ + b_ * b_, 0.5);
 }
 
 void Model2dLine::fitTwoPoints(const Data &points)
 {
     // Line eq: ax + by + c = 0.
-    const Datum &P = points[0], &Q = points[1];
-    const double a = Q.y - P.y;
-    const double b = P.x - Q.x;
-    const double c = -a * (P.x) - b * (P.y);
+    const Datum &p1 = points[0], &p2 = points[1];
+    const double a = p2.y - p1.y;
+    const double b = p1.x - p2.x;
+    const double c = -a * p1.x - b * p1.y;
 
     // -- Save results.
     a_ = a, b_ = b, c_ = c;
+    this->is_fitted_ = true;
+
     dxdy_ = cv::Point2d(b, -a);
-    p1_ = P, p2_ = Q;
+    p1_ = p1, p2_ = p2;
+
+    double error1 = this->calcError(p1); // should be zero.
+    double error2 = this->calcError(p2); // should be zero.
+    return;
 }
 
 void Model2dLine::fitMultiplePoints(const Data &points)
@@ -71,6 +76,8 @@ void Model2dLine::fitMultiplePoints(const Data &points)
 
     // -- Save results.
     a_ = a, b_ = b, c_ = c;
+    this->is_fitted_ = true;
+
     dxdy_ = cv::Point2d(line_direction(0), line_direction(1));
     p1_ = {x0, y0}, p2_ = {x0, y0};
 }
@@ -80,7 +87,8 @@ double Model2dLine::calcError(const Datum &point) const
     if (!is_fitted_)
         throw std::runtime_error("Model hasn't been fitted.");
     // Error = |ax+by+c|/sqrt(a**2+b**2)
-    return abs(a_ + point.x + b_ * point.y + c_) / sqrt_a2b2_;
+    const double error = abs(a_ * point.x + b_ * point.y + c_) / sqrt_a2b2_;
+    return error;
 }
 
 void Model2dLine::draw(cv::Mat *img_disp,

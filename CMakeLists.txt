@@ -56,6 +56,9 @@ add_subdirectory( src/my_ransac ) # Generated libs: models
 add_executable( test_fit_2d_line tests/test_fit_2d_line.cpp )
 target_link_libraries( test_fit_2d_line ${CV_LIBS} models)
 
+add_executable( test_ransac_fit_2d_line tests/test_ransac_fit_2d_line.cpp )
+target_link_libraries( test_ransac_fit_2d_line ${CV_LIBS} ransac models)
+
 add_executable( test_svd tests/others/test_svd.cpp )
 target_link_libraries( test_svd ${CV_LIBS})
 
