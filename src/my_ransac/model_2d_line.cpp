@@ -36,7 +36,7 @@ void Model2dLine::fitTwoPoints(const Data &points)
 
     // -- Save results.
     a_ = a, b_ = b, c_ = c;
-    this->is_fitted_ = true;
+    this->isFitted_ = true;
 
     dxdy_ = cv::Point2d(b, -a);
     p1_ = p1, p2_ = p2;
@@ -76,7 +76,7 @@ void Model2dLine::fitMultiplePoints(const Data &points)
 
     // -- Save results.
     a_ = a, b_ = b, c_ = c;
-    this->is_fitted_ = true;
+    this->isFitted_ = true;
 
     dxdy_ = cv::Point2d(line_direction(0), line_direction(1));
     p1_ = {x0, y0}, p2_ = {x0, y0};
@@ -84,7 +84,7 @@ void Model2dLine::fitMultiplePoints(const Data &points)
 
 double Model2dLine::calcError(const Datum &point) const
 {
-    if (!is_fitted_)
+    if (!isFitted_)
         throw std::runtime_error("Model hasn't been fitted.");
     // Error = |ax+by+c|/sqrt(a**2+b**2)
     const double error = abs(a_ * point.x + b_ * point.y + c_) / sqrt_a2b2_;

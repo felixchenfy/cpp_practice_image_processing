@@ -14,26 +14,22 @@
  *      checkLocalMaxAndSuppress
  */
 
+#include <iostream>
 #include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-
+#include <opencv2/imgproc.hpp>
 #include <string>
 #include <vector>
-#include <iostream>
 
-namespace cv_commons
-{
+namespace cv_commons {
 
 /**
  * Read a color image from disk.
  * If image path is invalid, print the filename and then exit the program.
  */
-inline cv::Mat readImage(const std::string &filename = "")
-{
-    cv::Mat src = imread(cv::samples::findFile(filename), cv::IMREAD_COLOR); // Load an image
-    if (src.empty())
-    {
+inline cv::Mat readImage(const std::string &filename = "") {
+    cv::Mat src = imread(cv::samples::findFile(filename), cv::IMREAD_COLOR);  // Load an image
+    if (src.empty()) {
         std::cout << "Could not open or find the image: \n"
                   << filename << std::endl;
         exit(EXIT_FAILURE);
@@ -44,8 +40,7 @@ inline cv::Mat readImage(const std::string &filename = "")
 /**
  * Gray image to color image by cv::cvtColor.
  */
-inline cv::Mat3b gray2color(const cv::Mat1b &gray)
-{
+inline cv::Mat3b gray2color(const cv::Mat1b &gray) {
     assert(gray.channels() == 1);
     cv::Mat3b color;
     cv::cvtColor(gray, color, cv::COLOR_GRAY2BGR);
@@ -53,11 +48,10 @@ inline cv::Mat3b gray2color(const cv::Mat1b &gray)
 }
 
 // Convert any image to 8UC3 color image.
-inline cv::Mat3b any2color(const cv::Mat &image)
-{
+inline cv::Mat3b any2color(const cv::Mat &image) {
     assert(image.channels() == 1 || image.channels() == 3);
     cv::Mat I_uint8;
-    image.convertTo(I_uint8, CV_8U); // To uint8.
+    image.convertTo(I_uint8, CV_8U);  // To uint8.
     if (I_uint8.channels() == 1)
         cv::cvtColor(I_uint8, I_uint8, cv::COLOR_GRAY2BGR);
     return I_uint8;
@@ -72,12 +66,11 @@ inline cv::Mat float2uint8(
     const cv::Mat &gray,
     bool take_abs = false,
     double scale = 1.0,
-    double inc_value = 0.)
-{
-    cv::Mat tmp = take_abs ? cv::abs(gray) : gray; // Take abs.
-    tmp = tmp * scale + inc_value;                 // Scale and shift value.
+    double inc_value = 0.) {
+    cv::Mat tmp = take_abs ? cv::abs(gray) : gray;  // Take abs.
+    tmp = tmp * scale + inc_value;                  // Scale and shift value.
     cv::Mat dst;
-    tmp.convertTo(dst, CV_8U); // To uint8.
+    tmp.convertTo(dst, CV_8U);  // To uint8.
     return dst;
 }
 
@@ -88,13 +81,11 @@ inline cv::Mat float2uint8(
 inline cv::Mat display_images(
     const std::vector<cv::Mat> images,
     const std::string WINDOW_NAME = "Images",
-    const int wait_key_ms = 0)
-{
+    const int wait_key_ms = 0) {
     cv::Mat img0 = images[0];
     const int rows = img0.rows, cols = img0.cols;
     cv::Mat img_disp = any2color(img0);
-    for (int i = 1; i < images.size(); i++)
-    {
+    for (int i = 1; i < images.size(); i++) {
         const cv::Mat &image = images[i];
         assert(image.rows == rows && image.cols == cols);
         cv::Mat next_image = any2color(image);
@@ -112,12 +103,10 @@ inline cv::Mat display_images(
  * @param radius Radius of the neighbor square.
  */
 template <typename pixel_type>
-bool isLocalMax(const cv::Mat &img, int row, int col, int radius)
-{
+bool isLocalMax(const cv::Mat &img, int row, int col, int radius) {
     pixel_type center_value = img.at<pixel_type>(row, col);
     for (int m = -radius; m <= radius; m++)
-        for (int n = -radius; n <= radius; n++)
-        {
+        for (int n = -radius; n <= radius; n++) {
             if (m == 0 || n == 0)
                 continue;
             int r = row + m, c = col + n;
@@ -134,12 +123,10 @@ bool isLocalMax(const cv::Mat &img, int row, int col, int radius)
  * @param radius Radius of the neighbor.
  */
 template <typename pixel_type>
-void setNeighborsToZero(cv::Mat *img, int row, int col, int radius)
-{
+void setNeighborsToZero(cv::Mat *img, int row, int col, int radius) {
     assert(img != nullptr);
     for (int m = -radius; m <= radius; m++)
-        for (int n = -radius; n <= radius; n++)
-        {
+        for (int n = -radius; n <= radius; n++) {
             if (m == 0 || n == 0)
                 continue;
             int r = row + m, c = col + n;
@@ -156,19 +143,16 @@ void setNeighborsToZero(cv::Mat *img, int row, int col, int radius)
  * @param radius Radius of the block.
  */
 template <typename pixel_type>
-void setBlockToZero(cv::Mat *img, int row, int col, int radius)
-{
+void setBlockToZero(cv::Mat *img, int row, int col, int radius) {
     assert(img != nullptr);
     for (int m = -radius; m <= radius; m++)
-        for (int n = -radius; n <= radius; n++)
-        {
+        for (int n = -radius; n <= radius; n++) {
             int r = row + m, c = col + n;
             if (r < 0 || c < 0 || r >= img->rows || c >= img->cols)
                 continue;
             img->at<pixel_type>(r, c) = static_cast<pixel_type>(0);
         }
 }
-
 
 /**
  * Check if img[row, col] is >= {all its neighbor elements}.
@@ -183,27 +167,25 @@ template <typename pixel_type>
 bool checkLocalMaxAndSuppress(
     const cv::Mat &img,
     const int row, const int col, const int radius,
-    cv::Mat1b *mask)
-{
+    cv::Mat1b *mask) {
     pixel_type center_value = img.at<pixel_type>(row, col);
     for (int m = -radius; m <= radius; m++)
-        for (int n = -radius; n <= radius; n++)
-        {
+        for (int n = -radius; n <= radius; n++) {
             if (m == 0 || n == 0)
                 continue;
             int r = row + m, c = col + n;
             if (r < 0 || c < 0 || r >= img.rows || c >= img.cols)
                 continue;
-            if (center_value < img.at<pixel_type>(r, c)) // not >=
-            {
+            if (center_value < img.at<pixel_type>(r, c)) {  // not >=
+
                 mask->at<uchar>(row, col) = 0;
                 return false;
-            }
-            else if (center_value > img.at<pixel_type>(r, c))
+            } else if (center_value > img.at<pixel_type>(r, c)) {
                 mask->at<uchar>(r, c) = 0;
+            }
         }
     return true;
 }
 
-} // namespace cv_commons
-#endif
+}  // namespace cv_commons
+#endif  // MY_CV_COMMONS_H

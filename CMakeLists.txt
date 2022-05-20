@@ -3,9 +3,9 @@ project( my_project )
 
 # -- Compile settings
 set( CMAKE_CXX_COMPILER "g++" )
-set( CMAKE_BUILD_TYPE "Debug" )
-# set( CMAKE_BUILD_TYPE "Release" ) # *** stack smashing detected ***: <unknown> terminated
-# set( CMAKE_CXX_FLAGS "-std=c++11 -O3" )
+# set( CMAKE_BUILD_TYPE "Debug" )
+set( CMAKE_BUILD_TYPE "Release" )
+set( CMAKE_CXX_FLAGS "-std=c++14 -O3" )
 
 set( EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin )
 set( LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib )
@@ -49,7 +49,7 @@ target_link_libraries( test_harris ${CV_LIBS})
 # you may install it, or comment out all following lines.
 
 include_directories(
-    "/usr/include/eigen3/" # I use eigen in RASNAC algorithm. You may change this to your directory.
+    "/usr/include/eigen3/" # I use eigen library to implement RASNAC algorithm. You may change this to your directory.
 )
 add_subdirectory( src/my_ransac ) # Generated libs: models
 

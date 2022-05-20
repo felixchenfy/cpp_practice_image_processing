@@ -1,39 +1,33 @@
-
 #include "my_cv/keypoints.h"
+
+#include <iostream>
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <vector>
 
 #include "my_cv/cv_commons.hpp"
 #include "my_cv/filters.h"
 #include "my_cv/geometry.h"
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
-
-#include <vector>
-#include <iostream>
-
-namespace keypoints
-{
+namespace keypoints {
 /**
  * This is Harris' score function for detecting corners.
  * The score is high if the pixel is a corner point.
  * 
- * The pixel is a corner only when its gradient of intensity
- *  is large in both two orthogonal directions.
- * Translated into math, it means that 
- *  that 2x2 matrix has 2 large eigenvalues. 
+ * The pixel is a corner only when its gradient of intensity is large in both two orthogonal directions.
+ * Translated into math, it means that that 2x2 matrix has 2 large eigenvalues. 
  * So we can design the score function like this:
  *      score = a1 * a2 - k * (a1 + a2)**2 
  *      where a1,a2 are the eigenvalues.
  * 
- * Since the matrix havs this properties:
+ * Since the matrix have this properties:
  *      trace(m) == a1 + a2 
  *      determinant(m) == a1 * a2
  * The score function is equivalent to:
  *      score = determinant(m) - k * trance(m)**2
  */
 inline double _Harris_score_func_for_corner(
-    double trace, double determinant, double k = 0.04)
-{
+    double trace, double determinant, double k = 0.04) {
     return determinant - k * pow(trace, 2.);
 }
 
@@ -45,8 +39,7 @@ inline double _Harris_score_func_for_corner(
  *  score = (a1 - a2)**2
  */
 inline double _Harris_score_func_for_edge(
-    double trace, double determinant)
-{
+    double trace, double determinant) {
     return pow(trace, 2.) - 4 * determinant;
 }
 
@@ -58,12 +51,11 @@ std::vector<std::pair<double, cv::Point2i>> detectHarrisCorners(
     const int nms_radius,
     const unsigned char min_score,
     const double scale_score,
-    const int harris_window_size)
-{
+    const int harris_window_size) {
     assert(harris_window_size % 2 == 1);
 
-    cv::Mat1d Ix = filters::sobelX(gray); // Gradient x.
-    cv::Mat1d Iy = filters::sobelY(gray); // Gradient y.
+    cv::Mat1d Ix = filters::sobelX(gray);  // Gradient x.
+    cv::Mat1d Iy = filters::sobelY(gray);  // Gradient y.
     cv::Mat1d Ix2 = Ix.mul(Ix);
     cv::Mat1d Iy2 = Iy.mul(Iy);
     cv::Mat1d Ixy = Ix.mul(Iy);
@@ -71,7 +63,7 @@ std::vector<std::pair<double, cv::Point2i>> detectHarrisCorners(
     cv::Mat1d Iy2_window_mean = filters::gaussion(Iy2, harris_window_size);
     cv::Mat1d Ixy_window_mean = filters::gaussion(Ixy, harris_window_size);
     cv::Mat1d Ixy2_window_mean = Ixy_window_mean.mul(Ixy_window_mean);
-    cv::Mat1d mat_trace = Ix2_window_mean + Iy2_window_mean;
+    cv::Mat1d mat_trace = Ix2_window_mean + Iy2_window_mean; // What does this mean?
     cv::Mat1d mat_determinant = Ix2_window_mean.mul(Iy2_window_mean) - Ixy2_window_mean;
     cv::Mat1d res_score_img = cv::Mat::zeros(gray.size(), CV_64FC1);
 
@@ -99,23 +91,20 @@ std::vector<std::pair<double, cv::Point2i>> detectHarrisCorners(
     //     peaks_position.push_back(peak.second);
 
     // -- Return.
-    if (dst_img_corner_score != nullptr)
-    {
+    if (dst_img_corner_score != nullptr) {
         *dst_img_corner_score = cv_commons::float2uint8(res_score_img);
     }
-    if (dst_img_with_corners != nullptr)
-    {
+    if (dst_img_with_corners != nullptr) {
         // Draw it!
         constexpr int RADIUS = 2;
         constexpr int LINE_TYPE = 8;
         const cv::Scalar COLOR_RED{0, 0, 255};
         *dst_img_with_corners = cv_commons::gray2color(gray);
-        for (const auto p : corners_score_and_pos)
-        {
+        for (const auto p : corners_score_and_pos) {
             cv::circle(*dst_img_with_corners, p.second,
-                   RADIUS, COLOR_RED, CV_FILLED, LINE_TYPE);
+                       RADIUS, COLOR_RED, CV_FILLED, LINE_TYPE);
         }
     }
     return corners_score_and_pos;
 }
-} // namespace keypoints
+}  // namespace keypoints

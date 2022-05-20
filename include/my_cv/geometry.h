@@ -8,35 +8,37 @@
  *      nms: non-maximum suppression.
  */
 
-#include "my_cv/cv_commons.hpp"
-#include <vector>
+#include <algorithm>  // sort
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
+#include <utility>  // pair
+#include <vector>
 
-namespace geometry
-{
+#include "my_cv/cv_commons.hpp"
+
+namespace geometry {
 
 /**
  * 2D line. Represented in polar coordinate.
  */
-struct Line2dPolor
-{
-    double distance; // Distance to the origin.
-    double angle;    // Angle of the line's perpendicular line which passes the origin.
-    Line2dPolor(double distance = 0.0, double angle = 0.0) : distance(distance), angle(angle) {}
-    void drawToImage(cv::Mat *img, const cv::Scalar color = {0, 0, 255}, const int thickness = 2) const
-    {
+struct Line2dPolor {
+    double distance;  // Distance to the origin.
+    double angle;     // Angle of the line's perpendicular line which passes the origin.
+    explicit Line2dPolor(double distance = 0.0, double angle = 0.0) : distance(distance), angle(angle) {}
+    void drawToImage(cv::Mat *img, const cv::Scalar color = {0, 0, 255}, const int thickness = 2) const {
         assert(img->channels() == 3);
-        double a = angle / 180.0 * M_PI; // Angle.
+        double a = angle / 180.0 * M_PI;  // Angle.
         double x = distance * cos(a);
         double y = distance * sin(a);
-        int L = 10 * (img->rows + img->cols); // Draw a line longer than image size.
+        int L = 10 * (img->rows + img->cols);  // Draw a line longer than image size.
         double dx = cos(a - M_PI_2) * L, dy = sin(a - M_PI_2) * L;
-        cv::line(*img, {int(x + dx), int(y + dy)}, {int(x - dx), int(y - dy)}, color);
+        cv::line(*img,
+                 {static_cast<int>(x + dx), static_cast<int>(y + dy)},
+                 {static_cast<int>(x - dx), static_cast<int>(y - dy)},
+                 color);
     }
-    void print() const
-    {
+    void print() const {
         std::cout << "Line parameters: angle = " << angle << " degrees, "
                   << "distance = " << distance << " pixels." << std::endl;
     }
@@ -61,7 +63,8 @@ detectLineByHoughTransform(
 
 /**
  * Non-maximum suppression on heatmap.
- * @param heaptmap An image of with pixel_type.
+ * @param heaptmap An image with pixel_type.
+ * @param min_value
  * @param radius Radius of NMS.
  * @return {score, (x, y) position} of each peak point in heatmap.
  *  The points are sort from high score to low score.
@@ -71,16 +74,14 @@ std::vector<std::pair<pixel_type, cv::Point2i>>
 nms(
     const cv::Mat &heatmap,
     const int min_value,
-    const int radius)
-{
+    const int radius) {
     assert(heatmap.channels() == 1);
 
     // -- Detect local max and store the (score, position).
     cv::Mat1b mask = cv::Mat::ones(heatmap.size(), CV_8UC1);
-    std::vector<std::pair<pixel_type, cv::Point2i>> peaks; // vector of (score, position).
+    std::vector<std::pair<pixel_type, cv::Point2i>> peaks;  // vector of (score, position).
     for (int i = 0; i < heatmap.rows; i++)
-        for (int j = 0; j < heatmap.cols; j++)
-        {
+        for (int j = 0; j < heatmap.cols; j++) {
             const pixel_type score = heatmap.at<pixel_type>(i, j);
 
             // -- Threshold by min_value.
@@ -93,8 +94,7 @@ nms(
                 heatmap, i, j, radius, &mask);
 
             // -- Process if it's max.
-            if (is_max)
-            {
+            if (is_max) {
                 // Set all neighbors to zero.
                 // (Even if the center and neighbor has same score.)
                 cv_commons::setNeighborsToZero<uchar>(&mask, i, j, radius);
@@ -115,5 +115,5 @@ nms(
     return peaks;
 }
 
-} // namespace geometry
+}  // namespace geometry
 #endif
